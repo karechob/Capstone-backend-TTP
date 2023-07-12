@@ -16,4 +16,4 @@ const TripHistory = db.define("tripHistory", {
     }
 });
 
-module.exports = Trip;
+module.exports = TripHistory;

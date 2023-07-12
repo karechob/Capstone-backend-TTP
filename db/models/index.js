@@ -1,12 +1,15 @@
-const { Sequelize } = require("sequelize");
-require('dotenv').config();
+// const Users = require("./users");
+// const Trips = require("./trips");
 
-// const db = new Sequelize(`postgres://localhost:5432/${name}`, {
-//     logging: false,
-// });
-const db = new Sequelize(process.env.DATABASE, process.env.USER_NAME,process.env.PASSWORD, {
-    host: 'localhost',
-    dialect: "postgres" /* one of 'mysql' | 'postgres' | 'sqlite' | 'mariadb' | 'mssql' | 'db2' | 'snowflake' | 'oracle' */
-  });
+// Associations Go Here
 
-module.exports = db;
+// Many to Many
+// Trips.hasMany(users)
+// Riders.belongTo(trips)
+
+// module.exports = {
+//   Trips,
+//   Users,
+// };
+
+//belongstomany --> many to many relationships

@@ -1,11 +1,11 @@
-// const Users = require("./users");
-// const Trips = require("./trips");
+const user = require("./user");
+const Trip = require("./trip");
 
 // Associations Go Here
 
 // Many to Many
-// Trips.hasMany(users)
-// Riders.belongTo(trips)
+// trip.hasMany(users)
+// user.belongTo(trip)
 
 // module.exports = {
 //   Trips,

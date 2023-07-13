@@ -1,15 +1,28 @@
-const user = require("./user");
+const User = require("./user");
 const Trip = require("./trip");
 
 // Associations Go Here
 
-// Many to Many
-// trip.hasMany(users)
-// user.belongTo(trip)
+User.hasMany(Trip, { foreignKey: "userId" });
+Trip.belongsTo(User, { foreignKey: "userId" });
 
-// module.exports = {
-//   Trips,
-//   Users,
-// };
+Trip.belongsToMany(User, { through: Collaborator, foreignKey: "tripId" });
+User.belongsToMany(Trip, { through: Collaborator, foreignKey: "userId" });
 
-//belongstomany --> many to many relationships
+Trip.hasMany(Activity, { foreignKey: "tripId" });
+Activity.belongsTo(Trip, { foreignKey: "tripId" });
+
+Trip.belongsToMany(Activity, {
+  through: ActivityTripConnection,
+  foreignKey: "tripId",
+});
+Activity.belongsToMany(Trip, {
+  through: ActivityTripConnection,
+  foreignKey: "activityId",
+});
+
+Trip.hasOne(HotelDetails, { foreignKey: "tripId" });
+HotelDetails.belongsTo(Trip, { foreignKey: "tripId" });
+
+Trip.hasOne(FlightDetails, { foreignKey: "tripId" });
+FlightDetails.belongsTo(Trip, { foreignKey: "tripId" });

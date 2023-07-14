@@ -47,6 +47,14 @@ User.init(
                     user.salt = await User.generateSalt();
                     user.password = await User.encryptPassword(user.password, user.salt);
                 }
+            },
+            beforeBulkCreate: async (user) => {
+                users.forEach(async (user) => {
+                    if (user.changed("password")) {
+                        user.salt = await User.generateSalt();
+                        user.password = await User.encryptPassword(user.password, user.salt);
+                    }
+                })
             }
         }
     }

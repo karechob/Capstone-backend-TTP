@@ -2,7 +2,7 @@ const { DataTypes } = require("sequelize");
 const db = require("../db");
 
 const Hotel = db.define('hotel', {
-    hotel_Id: {
+    id: {
        type: DataTypes.INTEGER,
        allowNull: false
     },

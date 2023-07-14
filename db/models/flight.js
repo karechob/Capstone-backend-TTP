@@ -1,7 +1,7 @@
 const { DataTypes } = require("sequelize");
 const db = require("../db");
 
-const Flight = db.define('hotel', {
+const Flight = db.define('flight', {
     id: {
        type: DataTypes.INTEGER,
        allowNull: false

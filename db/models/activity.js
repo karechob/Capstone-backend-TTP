@@ -1,23 +1,20 @@
 const { DataTypes } = require("sequelize");
 const db = require("../db");
 
-const Flight = db.define('hotel', {
+const Activity = db.define('activity', {
     id: {
-       type: DataTypes.INTEGER,
-       allowNull: false
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        primaryKey: true
     },
-    airline: {
+    name: {
         type: DataTypes.STRING,
         allowNull: false
     },
     cost: {
         type: DataTypes.FLOAT,
         allowNull: false
-    },
-    link: {
-        type: DataTypes.STRING,
-        allowNull: false
     }
 });
 
-module.exports = Flight;
+module.exports = Activity;

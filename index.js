@@ -1,35 +1,67 @@
-const express = require("express");//Imports the Express.js module.
-const db = require("./db");// Imports the db object
+const express = require("express");
+const db = require("./db");
 const cors = require("cors");
-const app = express();//Create an instance of the express application
-const PORT = 8080;// Setting the port number for the server
+const PORT = 8080;
+const session = require("express-session");
+const SequelizeStore = require("connect-session-sequelize")(session.Store);
+const passport = require("passport");
 
-//A middleware parser for JSON bodies
-app.use(express.json())
-app.use(cors())
+const sessionStore = new SequelizeStore({ db });
 
-// Mount on API
-app.use("/api", require("./api"));
-
-// Define an asynchronous function to synchronize the DB
-const syncDB = async() => await db.sync({}); // {force: true} clear db
-
-//Defining a function to start the server
-const serverRun = () => {
-// Start the server and listen on the specified port
-    app.listen(PORT, () => {
-
- // Logging a message to indicate server is running
-        console.log(`live on port: ${PORT}`)
-    });
+// Helper functions
+const serializeUser = (user, done) => done(null, user.id);
+const deserializeUser = async (id, done) => {
+  try {
+    const user = await db.model.user.findByPK(id);
+    done(null, user);
+  } catch (error) {
+    done(error);
+  }
 };
 
+const configSession = () => ({
+  secret: "",
+  store: sessionStore,
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    // 8 hours
+    maxAge: 2 * 60 * 60 * 1000,
+  },
+  httpOnly: true,
+});
 
-syncDB();
-// Synchronize the database
+// Middleware setup
+const setupMiddleware = (app) => {
+  app.use(express.json());
+  app.use(express.urlencoded({ extended: true }));
+  app.use(
+    cors({
+      origin: "http://localhost:3000", // allow the server to accept request from different origin
+      methods: "GET, HEAD, PUT, PATCH, POST, DELETE",
+      credentials: true,
+    })
+  );
+  app.use(session(configSession()));
+  app.use(passport.initialize());
+  app.use(passport.session());
+  return app;
+};
 
-serverRun();
-//Starting the server
+// Passport Setup
+const setupPassport = () => {
+  passport.serializeUser(serializeUser);
+  passport.deserializeUser(deserializeUser);
+};
 
-module.exports = app;
-// Export the app object
+// Routes
+const setupRoutes = (app) => {
+  app.use("/api", require("./api"));
+  app.use("/auth", require("./auth"));
+};
+
+// Start server and sync the db
+const startServer = async (app, port) => {
+  await db.sync();
+  app.listen(port, () => console.log(`Server is on port:${port}`));
+};

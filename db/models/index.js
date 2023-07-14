@@ -29,3 +29,7 @@ HotelDetails.belongsTo(Trip, { foreignKey: "tripId" });
 
 Trip.hasOne(FlightDetails, { foreignKey: "tripId" });
 FlightDetails.belongsTo(Trip, { foreignKey: "tripId" });
+
+module.exports = {
+  User,
+}

@@ -2,7 +2,7 @@ const { DataTypes } = require("sequelize");
 const db = require("../db");
 
 const Flight = db.define('hotel', {
-    flight_Id: {
+    id: {
        type: DataTypes.INTEGER,
        allowNull: false
     },

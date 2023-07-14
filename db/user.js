@@ -34,9 +34,9 @@ User.init(
         salt: {
             type: DataTypes.STRING
         },
-        // googleId: {
-        //     type: DataTypes.STRING
-        // },
+        googleId: {
+            type: DataTypes.STRING
+        },
     },
     {
         sequelize:db,

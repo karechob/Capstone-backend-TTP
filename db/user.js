@@ -41,7 +41,7 @@ User.init(
     {
         sequelize:db,
         modelName:"User",
-        hook: {
+        hooks: {
             beforeSave: async (user) => {
                 if(user.changed('password')) {
                     user.salt = await User.generateSalt();

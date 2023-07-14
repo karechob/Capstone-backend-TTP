@@ -1,5 +1,8 @@
 const User = require("./user");
 const Trip = require("./trip");
+const Activity = require("./activity");
+const FlightDetails = require("./flight");
+const HotelDetails = require("./hotel");
 
 // Associations Go Here
 

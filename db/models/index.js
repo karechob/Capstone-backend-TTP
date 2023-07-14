@@ -1,5 +1,6 @@
 const User = require("./user");
 const Trip = require("./trip");
+const Activity = require("./activity");
 
 // Associations Go Here
 

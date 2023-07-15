@@ -4,7 +4,8 @@ const db = require("../db");
 const Flight = db.define('flight', {
     id: {
        type: DataTypes.INTEGER,
-       allowNull: false
+       allowNull: false,
+       primaryKey: true
     },
     airline: {
         type: DataTypes.STRING,

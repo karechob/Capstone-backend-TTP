@@ -4,7 +4,8 @@ const db = require("../db");
 const Hotel = db.define('hotel', {
     id: {
        type: DataTypes.INTEGER,
-       allowNull: false
+       allowNull: false,
+       primaryKey: true
     },
     name: {
         type: DataTypes.STRING,

@@ -64,4 +64,18 @@ const setupRoutes = (app) => {
 const startServer = async (app, port) => {
   await db.sync();
   app.listen(port, () => console.log(`Server is on port:${port}`));
+  return app;
 };
+
+//configure all functions in one major function
+
+const configureApp = async(port) => {
+  const app = express();
+  setupPassport();
+  setupMiddleware(app);
+  await sessionStore.sync();
+  setupRoutes(app)
+  return startServer(app, port);
+}
+
+module.exports = configureApp(8080);

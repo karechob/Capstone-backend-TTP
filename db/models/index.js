@@ -9,18 +9,18 @@ const HotelDetails = require("./hotel");
 User.hasMany(Trip, { foreignKey: "userId" });
 Trip.belongsTo(User, { foreignKey: "userId" });
 
-Trip.belongsToMany(User, { through: Collaborator, foreignKey: "tripId" });
-User.belongsToMany(Trip, { through: Collaborator, foreignKey: "userId" });
+Trip.belongsToMany(User, { through: "Collaborator", foreignKey: "tripId" });
+User.belongsToMany(Trip, { through: "Collaborator", foreignKey: "userId" });
 
 Trip.hasMany(Activity, { foreignKey: "tripId" });
 Activity.belongsTo(Trip, { foreignKey: "tripId" });
 
 Trip.belongsToMany(Activity, {
-  through: ActivityTripConnection,
+  through: "ActivityTripConnection",
   foreignKey: "tripId",
 });
 Activity.belongsToMany(Trip, {
-  through: ActivityTripConnection,
+  through: "ActivityTripConnection",
   foreignKey: "activityId",
 });
 
@@ -32,4 +32,8 @@ FlightDetails.belongsTo(Trip, { foreignKey: "tripId" });
 
 module.exports = {
   User,
-}
+  Trip,
+  Activity,
+  FlightDetails,
+  HotelDetails,
+};

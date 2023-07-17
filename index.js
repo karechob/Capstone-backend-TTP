@@ -1,18 +1,18 @@
 const express = require("express");
 const db = require("./db");
 const cors = require("cors");
-const PORT = 8080;
 const session = require("express-session");
 const SequelizeStore = require("connect-session-sequelize")(session.Store);
 const passport = require("passport");
 
+const PORT = 8080;
 const sessionStore = new SequelizeStore({ db });
 
 // Helper functions
 const serializeUser = (user, done) => done(null, user.id);
 const deserializeUser = async (id, done) => {
   try {
-    const user = await db.model.user.findByPK(id);
+    const user = await db.model.user.findByPk(id); // Correct the method name to `findByPk`
     done(null, user);
   } catch (error) {
     done(error);
@@ -25,10 +25,9 @@ const configSession = () => ({
   resave: false,
   saveUninitialized: false,
   cookie: {
-    // 8 hours
-    maxAge: 2 * 60 * 60 * 1000,
+    maxAge: 8 * 60 * 60 * 1000,
+    httpOnly: true,
   },
-  httpOnly: true,
 });
 
 // Middleware setup
@@ -37,7 +36,7 @@ const setupMiddleware = (app) => {
   app.use(express.urlencoded({ extended: true }));
   app.use(
     cors({
-      origin: "http://localhost:3000", // allow the server to accept request from different origin
+      origin: "http://localhost:3000",
       methods: "GET, HEAD, PUT, PATCH, POST, DELETE",
       credentials: true,
     })
@@ -67,15 +66,14 @@ const startServer = async (app, port) => {
   return app;
 };
 
-//configure all functions in one major function
-
-const configureApp = async(port) => {
+// Configure all functions in one major function
+const configureApp = async (port) => {
   const app = express();
   setupPassport();
   setupMiddleware(app);
   await sessionStore.sync();
-  setupRoutes(app)
+  setupRoutes(app);
   return startServer(app, port);
-}
+};
 
-module.exports = configureApp(8080);
+configureApp(PORT);

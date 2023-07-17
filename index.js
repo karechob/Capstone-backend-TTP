@@ -4,6 +4,7 @@ const cors = require("cors");
 const session = require("express-session");
 const SequelizeStore = require("connect-session-sequelize")(session.Store);
 const passport = require("passport");
+const crypto = require("crypto");
 
 const PORT = 8080;
 const sessionStore = new SequelizeStore({ db });
@@ -12,15 +13,19 @@ const sessionStore = new SequelizeStore({ db });
 const serializeUser = (user, done) => done(null, user.id);
 const deserializeUser = async (id, done) => {
   try {
-    const user = await db.model.user.findByPk(id); // Correct the method name to `findByPk`
+    const user = await db.model.user.findByPk(id);
     done(null, user);
   } catch (error) {
     done(error);
   }
 };
 
+const generateSecret = () => {
+  return crypto.randomBytes(32).toString("hex");
+};
+
 const configSession = () => ({
-  secret: "",
+  secret: generateSecret(),
   store: sessionStore,
   resave: false,
   saveUninitialized: false,

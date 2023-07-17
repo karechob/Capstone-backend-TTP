@@ -22,12 +22,6 @@ class User extends Model {
 
 User.init(
   {
-    id: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      autoIncrement: true,
-      primaryKey: true,
-    },
     name: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -51,7 +45,7 @@ User.init(
   },
   {
     sequelize: db,
-    modelName: "User",
+    modelName: "user",
     hooks: {
       beforeSave: async (user) => {
         if (user.changed("password")) {

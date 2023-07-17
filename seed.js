@@ -30,6 +30,7 @@ const seed = async () => {
       name: "Trip 1",
       weather: "Sunny",
       duration: 7,
+      ownerId: 1,
     });
     const trip2 = await Trip.create({
       origin: "City C",
@@ -39,6 +40,7 @@ const seed = async () => {
       name: "Trip 2",
       weather: "Cloudy",
       duration: 5,
+      ownerId: 1,
     });
 
     const activity1 = await Activity.create({

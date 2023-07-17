@@ -14,6 +14,8 @@ router.post("/login", async (req, res, next) => {
     } else {
       // Passport.js method attached to request
       req.login(user, (err) => (err ? next(err) : res.status(200).json(user)));
+      req.user = user;
+      req.session.save();
     }
   } catch (error) {
     next(error);

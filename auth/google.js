@@ -17,22 +17,20 @@ passport.use(
       try {
         const googleId = profile.id;
         const email = profile.emails[0].value;
-        const imgUrl = profile.photos[0].value;
-        const firstName = profile.name.givenName;
-        const lastName = profile.name.familyName;
-        const fullName = profile.name.displayName;
+        const name = profile.displayName;
+        const username = profile.emails[0].value.split("@")[0]; // Extract username from email
 
-        // Try to find user in database, if not present create a new user
+        // Try to find user in the database; if not present, create a new user
         const [user] = await User.findOrCreate({
           where: { googleId },
-          defaults: { email, imgUrl, firstName, lastName, fullName },
+          defaults: { name, username, email, googleId },
         });
 
         // Done with no errors and the user
         done(null, user);
       } catch (error) {
         // Error occurred, pass it through
-        done(err);
+        done(error);
       }
     }
   )
@@ -55,6 +53,8 @@ router.get(
   }),
   (req, res) => {
     // successful authentication, redirect home
+    console.log("Logged in successfully");
+
     res.redirect("http://localhost:3000/home");
   }
 );

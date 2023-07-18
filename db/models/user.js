@@ -1,4 +1,4 @@
-const crypto = require("crypto");
+const crypto = require("node:crypto");
 const { Model, DataTypes } = require("sequelize");
 const db = require("../db");
 
@@ -16,7 +16,7 @@ class User extends Model {
   }
 
   async correctPassword(pwAttempt) {
-    return User.encryptPassword(pwAttempt, this.salt) === this.password;
+    return (await User.encryptPassword(pwAttempt, this.salt)) === this.password;
   }
 }
 
@@ -32,20 +32,28 @@ User.init(
     },
     email: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
+    },
+    googleId: {
+      type: DataTypes.STRING,
+      allowNull: true,
     },
     password: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     salt: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
+    },
+    isAdmin: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
     },
   },
   {
     sequelize: db,
-    modelName: "user",
+    modelName: "User",
     hooks: {
       beforeSave: async (user) => {
         if (user.changed("password")) {

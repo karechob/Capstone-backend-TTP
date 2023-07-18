@@ -5,6 +5,7 @@ const session = require("express-session");
 const SequelizeStore = require("connect-session-sequelize")(session.Store);
 const passport = require("passport");
 const crypto = require("crypto");
+const User = require("./db/models/user");
 
 const PORT = 8080;
 const sessionStore = new SequelizeStore({ db });
@@ -13,9 +14,13 @@ const sessionStore = new SequelizeStore({ db });
 const serializeUser = (user, done) => done(null, user.id);
 const deserializeUser = async (id, done) => {
   try {
-    const user = await db.model.user.findByPk(id);
+    const user = await User.findByPk(id);
+    if (!user) {
+      return done(null, false);
+    }
     done(null, user);
   } catch (error) {
+    console.error("Deserialize User Error:", error);
     done(error);
   }
 };
@@ -49,6 +54,10 @@ const setupMiddleware = (app) => {
   app.use(session(configSession()));
   app.use(passport.initialize());
   app.use(passport.session());
+  app.use((req, res, next) => {
+    next();
+  });
+
   return app;
 };
 

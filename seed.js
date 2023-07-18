@@ -22,6 +22,15 @@ const seed = async () => {
       salt: salt,
     });
 
+    const user3 = await User.create({
+      name: "John Smith",
+      username: "johnsmith",
+      email: "johnsmith@example.com",
+      password: "Password33**",
+      salt: salt,
+      isAdmin: true,
+    });
+
     const trip1 = await Trip.create({
       origin: "City A",
       destination: "City B",
@@ -40,7 +49,7 @@ const seed = async () => {
       name: "Trip 2",
       weather: "Cloudy",
       duration: 5,
-      ownerId: 1,
+      ownerId: 2,
     });
 
     const activity1 = await Activity.create({
@@ -104,6 +113,7 @@ const seed = async () => {
     await trip1.addUser(user1);
     await trip1.addUser(user2);
     await trip2.addUser(user1);
+    await trip2.addUser(user3);
 
     await trip1.addActivity(activity1);
     await trip1.addActivity(activity2);

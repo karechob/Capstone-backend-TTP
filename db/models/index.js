@@ -7,7 +7,7 @@ const Hotel = require("./hotel");
 User.belongsToMany(Trip, { through: "collaborators", foreignKey: "userId" });
 Trip.belongsToMany(User, { through: "collaborators", foreignKey: "tripId" });
 
-User.hasOne(Trip, {as: "owner"});
+User.hasOne(Trip, { as: "owner" });
 
 Trip.belongsToMany(Activity, {
   through: "tripActivities",

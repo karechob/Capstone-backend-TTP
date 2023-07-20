@@ -1,15 +1,11 @@
 const isAdmin = (req, res, next) => {
   try {
     if (!req.isAuthenticated()) {
-      const error = new Error("User not authorized. Please log in.");
-      error.status = 401;
-      return next(error.message);
+      res.status(401).json({ error: "User not authorized" });
     }
     const user = req.user;
     if (!user.isAdmin) {
-      const error = new Error("User is not an admin.");
-      error.status = 403;
-      return next(error.message);
+      res.status(403).json({ error: "User is not an admin." });
     }
     return next();
   } catch (error) {

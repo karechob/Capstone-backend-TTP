@@ -4,17 +4,27 @@ const Activity = require("./activity");
 const Flight = require("./flight");
 const Hotel = require("./hotel");
 
-User.belongsToMany(Trip, { through: "collaborators", foreignKey: "userId" });
-Trip.belongsToMany(User, { through: "collaborators", foreignKey: "tripId" });
+User.belongsToMany(Trip, {
+  through: "collaborator",
+  as: "trips",
+  foreignKey: "userId",
+});
+Trip.belongsToMany(User, {
+  through: "collaborator",
+  as: "collaborators",
+  foreignKey: "tripId",
+});
 
-User.hasOne(Trip, { as: "owner" });
+User.hasMany(Trip, { foreignKey: "ownerId" });
 
 Trip.belongsToMany(Activity, {
-  through: "tripActivities",
+  through: "tripActivity",
+  as: "activities",
   foreignKey: "tripId",
 });
 Activity.belongsToMany(Trip, {
-  through: "tripActivities",
+  through: "tripActivity",
+  as: "trips",
   foreignKey: "activityId",
 });
 

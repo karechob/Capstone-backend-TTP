@@ -28,6 +28,9 @@ router.post("/", async (req, res, next) => {
       if (err) {
         return next(err);
       }
+      console.log(`${user.username} signuped successfully`);
+      console.log(`${user.username} logged in successfully`);
+
       return res.status(200).json({ message: "Signed up successfully" });
     });
   } catch (error) {

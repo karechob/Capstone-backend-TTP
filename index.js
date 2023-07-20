@@ -6,6 +6,7 @@ const SequelizeStore = require("connect-session-sequelize")(session.Store);
 const passport = require("passport");
 const crypto = require("crypto");
 const User = require("./db/models/user");
+require("dotenv").config();
 
 const PORT = 8080;
 const sessionStore = new SequelizeStore({ db });
@@ -29,14 +30,16 @@ const generateSecret = () => {
   return crypto.randomBytes(32).toString("hex");
 };
 
+const sessionSecret = process.env.SESSION_SECRET;
 const configSession = () => ({
-  secret: generateSecret(),
+  secret: sessionSecret,
   store: sessionStore,
   resave: false,
   saveUninitialized: false,
   cookie: {
     maxAge: 8 * 60 * 60 * 1000,
     httpOnly: true,
+    path: "/",
   },
 });
 
@@ -75,6 +78,7 @@ const setupRoutes = (app) => {
 
 // Start server and sync the db
 const startServer = async (app, port) => {
+  await sessionStore.sync();
   await db.sync();
   app.listen(port, () => console.log(`Server is on port:${port}`));
   return app;
@@ -85,7 +89,6 @@ const configureApp = async (port) => {
   const app = express();
   setupPassport();
   setupMiddleware(app);
-  await sessionStore.sync();
   setupRoutes(app);
   return startServer(app, port);
 };

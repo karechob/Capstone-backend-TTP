@@ -44,13 +44,12 @@ router.get("/history", isAuthenticated, async (req, res, next) => {
       flights: flights,
       hotels: hotels,
     };
-
+    
     res.json(responseData);
   } catch (error) {
     next(error);
   }
 });
-
 // Fetch user record
 router.get("/record", isAuthenticated, async (req, res, next) => {
   try {
@@ -151,6 +150,7 @@ router.get("/trips", isAuthenticated, async (req, res, next) => {
     if (!userId) {
       return res.status(403).json({ error: "Access denied" });
     }
+
     const user = await User.findByPk(userId, {
       include: {
         model: Trip,
@@ -182,6 +182,7 @@ router.get("/trips", isAuthenticated, async (req, res, next) => {
 
     const trips = user.dataValues.trips;
     res.status(200).send(trips);
+
   } catch (error) {
     next(error);
   }

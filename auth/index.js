@@ -3,6 +3,7 @@ const { User } = require("../db/models");
 const isAuthorized = require("../middleware/authMiddleware");
 
 // Mounted on /auth
+router.use("/me", require("./me"));
 router.use("/login", require("./login"));
 router.use("/logout", require("./logout"));
 router.use("/signup", require("./signup"));

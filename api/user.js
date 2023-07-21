@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const { Op } = require("sequelize");
-const { Flight, User, Trip, Hotel } = require("../db/models");
+const { User, Trip, Activity, Flight, Hotel } = require("../db/models");
 const isAdmin = require("../middleware/adminMiddleware");
 const { isAuthenticated } = require("../middleware/authMiddleware");
 
@@ -151,10 +151,35 @@ router.get("/trips", isAuthenticated, async (req, res, next) => {
     if (!userId) {
       return res.status(403).json({ error: "Access denied" });
     }
-    const user = await User.findByPk(userId, { include: Trip });
+    const user = await User.findByPk(userId, {
+      include: {
+        model: Trip,
+        as: "trips",
+        include: [
+          {
+            model: Hotel,
+          },
+          {
+            model: Flight,
+          },
+          {
+            model: Activity,
+            as: "activities",
+            through: { attributes: [] },
+          },
+          {
+            model: User,
+            as: "collaborators",
+            through: { attributes: [] },
+          },
+        ],
+      },
+    });
+
     if (!user) {
       res.status(400).json({ error: "User not found." });
     }
+
     const trips = user.dataValues.trips;
     res.status(200).send(trips);
   } catch (error) {
@@ -201,21 +226,28 @@ router.post("/", isAuthenticated, async (req, res, next) => {
 });
 
 // delete current trip
-router.delete("/:tripId", isAuthenticated, async (req, res, next) => {
+router.delete("/trip", isAuthenticated, async (req, res, next) => {
   try {
     const userId = req.user.id;
-    const currentTripId = req.params.tripId;
+
     if (!userId) {
       return res.status(403).json({ error: "Access denied" });
     }
-    if (!currentTripId) {
-      return res.status(400).json({ error: "No current trip found" });
-    }
-    const trip = await Trip.findByPk(currentTripId);
-    if (!trip) {
+
+    const currentTrip = await Trip.findOne({
+      where: {
+        isCurrent: true,
+        ownerId: userId,
+      },
+    });
+
+    if (!currentTrip) {
       return res.status(404).json({ error: "Current trip not found" });
     }
-    await trip.destroy();
+
+    await currentTrip.destroy();
+    console.log(currentTrip);
+
     res.status(200).json({ message: "Current trip deleted successfully" });
   } catch (error) {
     next(error);

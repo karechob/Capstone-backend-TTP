@@ -1,6 +1,6 @@
 const router = require("express").Router();
 
-router.post("/", (req, res, next) => {
+router.get("/", (req, res, next) => {
   const user = req.user.dataValues.username;
   req.logout((error) => {
     if (error) {

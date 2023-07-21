@@ -1,12 +1,7 @@
 const router = require("express").Router();
 const { Flight, User, Trip, Hotel, Activity } = require("../db/models");
 const isAdmin = require("../middleware/adminMiddleware");
-const { Op } = require("sequelize");
-
-const {
-  isAuthorized,
-  isAuthenticated,
-} = require("../middleware/authMiddleware");
+const { isAuthenticated } = require("../middleware/authMiddleware");
 
 /*----------------------- Admin Controls -----------------------*/
 
@@ -46,7 +41,7 @@ router.get("/", isAuthenticated, isAdmin, async (req, res, next) => {
 
     res.status(200).json(allUsers);
   } catch (error) {
-    console.log(error);
+    console.error("Error fetching users:", error);
     next(error);
   }
 });
@@ -61,11 +56,17 @@ router.delete(
   async (req, res, next) => {
     try {
       const identifier = req.params.identifier;
-      const user = await User.findOne({
-        where: {
-          [Op.or]: [{ email: identifier }, { id: identifier }],
-        },
-      });
+
+      let user;
+      if (identifier.includes("@")) {
+        user = await User.findOne({
+          where: {
+            email: identifier,
+          },
+        });
+      } else {
+        user = await User.findByPk(identifier);
+      }
 
       if (!user) {
         return res.status(404).send("User not found");
@@ -78,22 +79,6 @@ router.delete(
     }
   }
 );
-
-// // Delete user by ID
-// router.delete("/:id", isAuthenticated, isAdmin, async (req, res, next) => {
-//   try {
-//     const userId = req.params.id;
-//     console.log(userId);
-//     const user = await User.findByPk(userId);
-//     if (!user) {
-//       res.status(400).send("Failed to delete user");
-//     }
-//     //await user.destroy();
-//     res.status(200).send("User deleted successfully");
-//   } catch (error) {
-//     next(error);
-//   }
-// });
 
 /*--------------------------------------------------------------*/
 module.exports = router;

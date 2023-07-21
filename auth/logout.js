@@ -1,8 +1,7 @@
 const router = require("express").Router();
 
 router.get("/", (req, res, next) => {
-  //const user = req.user.User.dataValues.username;
-  console.log(req.user.User);
+  const user = req.user.dataValues.username;
   req.logout((error) => {
     if (error) {
       return next(error);
@@ -14,7 +13,7 @@ router.get("/", (req, res, next) => {
           .status(500)
           .json({ error: "An error occurred during logout" });
       }
-      //console.log(`${user} logged out successfully`);
+      console.log(`${user} logged out successfully`);
       res.status(200).json({ message: "Logged out successfully" });
     });
   });

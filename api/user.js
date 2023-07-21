@@ -151,7 +151,6 @@ router.get("/trips", isAuthenticated, async (req, res, next) => {
     if (!userId) {
       return res.status(403).json({ error: "Access denied" });
     }
-
     const user = await User.findByPk(userId, {
       include: {
         model: Trip,
@@ -248,6 +247,7 @@ router.delete("/trip", isAuthenticated, async (req, res, next) => {
 
     await currentTrip.destroy();
     console.log(currentTrip);
+
     res.status(200).json({ message: "Current trip deleted successfully" });
   } catch (error) {
     next(error);

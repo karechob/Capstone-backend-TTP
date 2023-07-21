@@ -13,7 +13,7 @@ router.get("/", (req, res, next) => {
           .status(500)
           .json({ error: "An error occurred during logout" });
       }
-      console.log(`${user} logged out successfully`);
+      //console.log(`${user} logged out successfully`);
       res.status(200).json({ message: "Logged out successfully" });
     });
   });

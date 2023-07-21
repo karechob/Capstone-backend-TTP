@@ -2,10 +2,16 @@ const isAuthorized = (req, res, next) => {
   if (req.isAuthenticated()) {
     return next();
   } else {
-    const error = new Error("User not authorized. Please log in.");
-    error.status = 401;
-    return next(error.message);
+    res.status(401).json({ error: "User not authorized" });
   }
 };
 
-module.exports = isAuthorized;
+const isAuthenticated = (req, res, next) => {
+  if (req.isAuthenticated()) {
+    return next();
+  } else {
+    res.status(401).json({ error: "User not authenticated. Please log in." });
+  }
+};
+
+module.exports = { isAuthorized, isAuthenticated };

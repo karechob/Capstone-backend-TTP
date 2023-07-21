@@ -44,13 +44,12 @@ router.get("/history", isAuthenticated, async (req, res, next) => {
       flights: flights,
       hotels: hotels,
     };
-
+    
     res.json(responseData);
   } catch (error) {
     next(error);
   }
 });
-
 // Fetch user record
 router.get("/record", isAuthenticated, async (req, res, next) => {
   try {
@@ -183,6 +182,7 @@ router.get("/trips", isAuthenticated, async (req, res, next) => {
 
     const trips = user.dataValues.trips;
     res.status(200).send(trips);
+
   } catch (error) {
     next(error);
   }
@@ -248,6 +248,7 @@ router.delete("/trip", isAuthenticated, async (req, res, next) => {
 
     await currentTrip.destroy();
     console.log(currentTrip);
+
     res.status(200).json({ message: "Current trip deleted successfully" });
   } catch (error) {
     next(error);

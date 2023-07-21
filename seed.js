@@ -13,7 +13,6 @@ const seed = async () => {
       password: "Password11**",
       salt: salt,
     });
-
     const user2 = await User.create({
       name: "Jane Smith",
       username: "janesmith",
@@ -21,7 +20,6 @@ const seed = async () => {
       password: "Password22**",
       salt: salt,
     });
-
     const user3 = await User.create({
       name: "John Smith",
       username: "johnsmith",
@@ -51,6 +49,16 @@ const seed = async () => {
       duration: 5,
       ownerId: 2,
     });
+    const trip3 = await Trip.create({
+      origin: "City E",
+      destination: "City F",
+      budget: 3000,
+      isCurrent: false,
+      name: "Trip 3",
+      weather: "Rainy",
+      duration: 3,
+      ownerId: 3,
+    });
 
     const activity1 = await Activity.create({
       name: "Activity 1",
@@ -60,33 +68,10 @@ const seed = async () => {
       name: "Activity 2",
       cost: 100,
     });
-
-    // const flight1 = await FlightDetails.create({
-    //   airline: "Airline A",
-    //   cost: 200,
-    //   link: "https://airlineA.com",
-    //   tripId: trip1.id,
-    // });
-    // const flight2 = await FlightDetails.create({
-    //   airline: "Airline B",
-    //   cost: 300,
-    //   link: "https://airlineB.com",
-    //   tripId: trip2.id,
-    // });
-
-    // // Create sample hotel details
-    // const hotel1 = await HotelDetails.create({
-    //   name: "Hotel A",
-    //   cost: 100,
-    //   link: "https://hotelA.com",
-    //   tripId: trip1.id,
-    // });
-    // const hotel2 = await HotelDetails.create({
-    //   name: "Hotel B",
-    //   cost: 150,
-    //   link: "https://hotelB.com",
-    //   tripId: trip2.id,
-    // });
+    const activity3 = await Activity.create({
+      name: "Activity 3",
+      cost: 150,
+    });
 
     const flight1 = await Flight.create({
       airline: "Airline A",
@@ -97,6 +82,11 @@ const seed = async () => {
       airline: "Airline B",
       cost: 300,
       link: "https://airlineB.com",
+    });
+    const flight3 = await Flight.create({
+      airline: "Airline C",
+      cost: 400,
+      link: "https://airlineC.com",
     });
 
     const hotel1 = await Hotel.create({
@@ -109,21 +99,34 @@ const seed = async () => {
       cost: 150,
       link: "https://hotelB.com",
     });
+    const hotel3 = await Hotel.create({
+      name: "Hotel C",
+      cost: 200,
+      link: "https://hotelC.com",
+    });
 
-    await trip1.addUser(user1);
-    await trip1.addUser(user2);
-    await trip2.addUser(user1);
-    await trip2.addUser(user3);
+    await trip1.addCollaborator(user1);
+    await trip1.addCollaborator(user2);
+    await trip2.addCollaborator(user1);
+    await trip2.addCollaborator(user3);
+    await trip3.addCollaborator(user1);
+    await trip3.addCollaborator(user2);
+    await trip3.addCollaborator(user3);
 
     await trip1.addActivity(activity1);
     await trip1.addActivity(activity2);
     await trip2.addActivity(activity2);
+    await trip3.addActivity(activity3);
+    await trip3.addActivity(activity2);
+    await trip3.addActivity(activity1);
 
     await trip1.setFlight(flight1);
     await trip2.setFlight(flight2);
+    await trip3.setFlight(flight3);
 
     await trip1.setHotel(hotel1);
     await trip2.setHotel(hotel2);
+    await trip3.setHotel(hotel3);
 
     console.log("Seed data created successfully!");
   } catch (error) {

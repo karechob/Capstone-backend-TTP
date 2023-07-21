@@ -24,6 +24,7 @@ router.post("/", async (req, res, next) => {
       console.log("Invalid login attempt");
       return res.status(401).json({ error: "Invalid login attempt" });
     }
+    console.log(user);
     req.login(user, (err) => {
       if (err) {
         return next(err);

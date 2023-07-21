@@ -51,12 +51,21 @@ router.get(
   passport.authenticate("google", {
     failureRedirect: "http://localhost:3000/login",
   }),
-  (req, res) => {
-    // successful authentication, redirect home
-    console.log("Logged in successfully");
+  async (req, res) => {
+    console.log("Google authentication successful");
+    const user = await User.findOne({
+      where: { email: req.user.dataValues.email },
+    });
 
-    res.redirect("http://localhost:3000/home");
+    req.login(user, (err) => {
+      if (err) {
+        console.error("Error creating session:", err);
+        return res.status(500).json({ message: "Server Error" });
+      }
+
+      console.log(`Logged in as ${user.dataValues.username}`);
+      res.redirect("http://localhost:3000/user");
+    });
   }
 );
-
 module.exports = router;

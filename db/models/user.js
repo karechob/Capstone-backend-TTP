@@ -50,6 +50,10 @@ User.init(
       type: DataTypes.BOOLEAN,
       defaultValue: false,
     },
+    image: {
+      type: DataTypes.STRING,
+      defaultValue: "https://i.imgur.com/WnjTXAa.png",
+    }
   },
   {
     sequelize: db,

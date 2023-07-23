@@ -27,9 +27,18 @@ const Trip = db.define("trip", {
     type: DataTypes.STRING,
     allowNull: true,
   },
+
+  startDate: {
+    type: DataTypes.DATE,
+    allowNull: false,
+  },
+  endDate: {
+    type: DataTypes.DATE,
+    allowNull: false,
+  },
   duration: {
     type: DataTypes.INTEGER,
-    allowNull: true,
+    allowNull: false,
   },
 });
 

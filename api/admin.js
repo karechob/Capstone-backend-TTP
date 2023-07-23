@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const { Flight, User, Trip, Hotel, Activity } = require("../db/models");
+const Collaborator = require("../db/models/collaborator");
 const isAdmin = require("../middleware/adminMiddleware");
 const { isAuthenticated } = require("../middleware/authMiddleware");
 
@@ -9,26 +10,34 @@ const { isAuthenticated } = require("../middleware/authMiddleware");
 router.get("/", isAuthenticated, isAdmin, async (req, res, next) => {
   try {
     const allUsers = await User.findAll({
+      attributes: {
+        exclude: ["id", "password", "salt"],
+      },
       include: [
         {
           model: Trip,
           as: "trips",
+          attributes: { exclude: ["id"] },
           include: [
             {
               model: Hotel,
+              attributes: { exclude: ["id"] },
             },
             {
               model: Flight,
+              attributes: { exclude: ["id"] },
             },
             {
               model: Activity,
               as: "activities",
               through: { attributes: [] },
+              attributes: { exclude: ["id"] },
             },
             {
-              model: User,
+              model: Collaborator,
               as: "collaborators",
               through: { attributes: [] },
+              attributes: { exclude: ["id"] },
             },
           ],
         },
@@ -39,7 +48,13 @@ router.get("/", isAuthenticated, isAdmin, async (req, res, next) => {
       return res.status(404).send("Users List Not Found");
     }
 
-    res.status(200).json(allUsers);
+    const usersWithTrips = allUsers.map((user) => ({
+      user: {
+        trips: user.dataValues.trips.map((trip) => ({ trip: trip })),
+      },
+    }));
+
+    res.status(200).json(usersWithTrips);
   } catch (error) {
     console.error("Error fetching users:", error);
     next(error);

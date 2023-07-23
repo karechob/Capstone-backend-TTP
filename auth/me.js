@@ -2,8 +2,9 @@ const router = require("express").Router();
 const { isAuthenticated } = require("../middleware/authMiddleware");
 
 router.get("/", isAuthenticated, (req, res, next) => {
-  const { name, username, email, createdAt, updatedAt, image } = req.user;
+  const { id, name, username, email, createdAt, updatedAt, image } = req.user;
   const user = {
+    id,
     name,
     username,
     email,

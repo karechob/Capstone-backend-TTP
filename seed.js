@@ -1,5 +1,6 @@
 const db = require("./db");
 const { User, Trip, Activity, Hotel, Flight } = require("./db/models");
+const Collaborator = require("./db/models/collaborator");
 
 const seed = async () => {
   try {
@@ -36,9 +37,12 @@ const seed = async () => {
       isCurrent: true,
       name: "Trip 1",
       weather: "Sunny",
+      startDate: new Date("2023-07-15"),
+      endDate: new Date("2023-07-22"),
       duration: 7,
       ownerId: 1,
     });
+
     const trip2 = await Trip.create({
       origin: "City C",
       destination: "City D",
@@ -46,9 +50,12 @@ const seed = async () => {
       isCurrent: false,
       name: "Trip 2",
       weather: "Cloudy",
+      startDate: new Date("2023-07-20"),
+      endDate: new Date("2023-07-25"),
       duration: 5,
       ownerId: 2,
     });
+
     const trip3 = await Trip.create({
       origin: "City E",
       destination: "City F",
@@ -56,6 +63,8 @@ const seed = async () => {
       isCurrent: false,
       name: "Trip 3",
       weather: "Rainy",
+      startDate: new Date("2023-07-30"),
+      endDate: new Date("2023-08-02"),
       duration: 3,
       ownerId: 3,
     });
@@ -105,13 +114,34 @@ const seed = async () => {
       link: "https://hotelC.com",
     });
 
-    await trip1.addCollaborator(user1);
-    await trip1.addCollaborator(user2);
-    await trip2.addCollaborator(user1);
-    await trip2.addCollaborator(user3);
-    await trip3.addCollaborator(user1);
-    await trip3.addCollaborator(user2);
-    await trip3.addCollaborator(user3);
+    const collaborator1 = await Collaborator.create({
+      name: "John Doe",
+      username: "johndoe",
+      email: "john@example.com",
+    });
+
+    const collaborator2 = await Collaborator.create({
+      name: "Jane Smith",
+      username: "janesmith",
+      email: "jane@example.com",
+    });
+    const collaborator3 = await Collaborator.create({
+      name: "John Smith",
+      username: "johnsmith",
+      email: "johnsmith@example.com",
+    });
+
+    await trip1.addCollaborator(collaborator1);
+    await trip1.addCollaborator(collaborator2);
+    await trip1.addCollaborator(collaborator3);
+
+    await trip2.addCollaborator(collaborator1);
+    await trip2.addCollaborator(collaborator2);
+    await trip2.addCollaborator(collaborator3);
+
+    await trip3.addCollaborator(collaborator1);
+    await trip3.addCollaborator(collaborator2);
+    await trip3.addCollaborator(collaborator3);
 
     await trip1.addActivity(activity1);
     await trip1.addActivity(activity2);

@@ -48,20 +48,12 @@ router.get("/", isAuthenticated, isAdmin, async (req, res, next) => {
       return res.status(404).send("Users List Not Found");
     }
 
-    const usersWithTrips = allUsers.map((user) => ({
-      user: {
-        trips: user.dataValues.trips.map((trip) => ({ trip: trip })),
-      },
-    }));
-
-    res.status(200).json(usersWithTrips);
+    res.status(200).json(allUsers);
   } catch (error) {
     console.error("Error fetching users:", error);
     next(error);
   }
 });
-
-module.exports = router;
 
 /// Delete user by email or ID
 router.delete(

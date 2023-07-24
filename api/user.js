@@ -76,11 +76,11 @@ router.put("/", isAuthenticated, async (req, res, next) => {
     }
     const user = await User.findByPk(userId);
     if (!user) {
-      res.status(400).json({ error: "Failed to update user" });
+      res.status(400).json({ error: "Failed to update settings" });
     }
     await user.update(req.body);
-    console.log(`${user.username} data updated successfully`);
-    res.status(200).json({ message: "User updated successfully" });
+    console.log(`${user.username} updated settings successfully`);
+    res.status(200).json({ message: "Settings updated successfully" });
   } catch (error) {
     next(error);
   }
@@ -221,10 +221,9 @@ router.get("/trips", isAuthenticated, async (req, res, next) => {
     if (!user) {
       res.status(400).json({ error: "User not found." });
     }
+
     const trips = user.dataValues.trips;
-    const tripsArray = trips.map((trip) => ({ trip }));
-    // const response = user.dataValues.trips;
-    res.status(200).send(tripsArray);
+    res.status(200).send(trips);
   } catch (error) {
     next(error);
   }

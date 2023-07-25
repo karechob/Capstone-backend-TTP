@@ -1,19 +1,19 @@
 const { DataTypes } = require("sequelize");
 const db = require("../db");
 
-const Flight = db.define("flight", {
-  airline: {
+const Collaborator = db.define("collaborator", {
+  name: {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  cost: {
-    type: DataTypes.FLOAT,
+  username: {
+    type: DataTypes.STRING,
     allowNull: false,
   },
-  link: {
+  email: {
     type: DataTypes.STRING,
     allowNull: false,
   },
 });
 
-module.exports = Flight;
+module.exports = Collaborator;

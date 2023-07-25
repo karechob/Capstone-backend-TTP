@@ -17,22 +17,20 @@ passport.use(
       try {
         const googleId = profile.id;
         const email = profile.emails[0].value;
-        const imgUrl = profile.photos[0].value;
-        const firstName = profile.name.givenName;
-        const lastName = profile.name.familyName;
-        const fullName = profile.name.displayName;
+        const name = profile.displayName;
+        const username = profile.emails[0].value.split("@")[0]; // Extract username from email
 
-        // Try to find user in database, if not present create a new user
+        // Try to find user in the database; if not present, create a new user
         const [user] = await User.findOrCreate({
           where: { googleId },
-          defaults: { email, imgUrl, firstName, lastName, fullName },
+          defaults: { name, username, email, googleId },
         });
 
         // Done with no errors and the user
         done(null, user);
       } catch (error) {
         // Error occurred, pass it through
-        done(err);
+        done(error);
       }
     }
   )
@@ -53,10 +51,21 @@ router.get(
   passport.authenticate("google", {
     failureRedirect: "http://localhost:3000/login",
   }),
-  (req, res) => {
-    // successful authentication, redirect home
-    res.redirect("http://localhost:3000/home");
+  async (req, res) => {
+    console.log("Google authentication successful");
+    const user = await User.findOne({
+      where: { email: req.user.dataValues.email },
+    });
+
+    req.login(user, (err) => {
+      if (err) {
+        console.error("Error creating session:", err);
+        return res.status(500).json({ message: "Server Error" });
+      }
+
+      console.log(`Logged in as ${user.dataValues.username}`);
+      res.redirect("http://localhost:3000/user");
+    });
   }
 );
-
 module.exports = router;

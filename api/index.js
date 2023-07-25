@@ -5,6 +5,7 @@ router.use("/admin", require("./admin"));
 router.use("/flights", require("./flights"))
 router.use("/hotels", require("./hotels"))
 router.use("/teleport", require("./teleport"))
+router.use("/activities", require("./activities"));
 router.use("/weather", require("./weather"))
 
 router.use((req, res, next) => {

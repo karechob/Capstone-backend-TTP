@@ -2,36 +2,47 @@ const router = require("express").Router();
 const axios = require('axios')
 require('dotenv').config();
 
-router.get('/', async function (req, res, next) {
+
+
+
+router.get('/information', async function (req, res, next) {
     try {
         const options = {
-            method: "GET",
-            url: "https://booking-com.p.rapidapi.com/v2/hotels/search",
+            method: 'GET',
+            url: 'https://booking-com.p.rapidapi.com/v2/hotels/search',
             params: {
-                order_by: "popularity",
-                adults_number: "2",
-                checkin_date: "2023-09-27",
-                filter_by_currency: "AED",
-                dest_id: "-553173",
-                locale: "en-gb",
-                checkout_date: "2023-09-28",
-                units: "metric",
-                room_number: "1",
-                dest_type: "city",
-                include_adjacency: "true",
-                children_number: "0",
-                page_number: "0",
-                children_ages: "5,0",
-                categories_filter_ids: "class::2,class::4,free_cancellation::1",
+                dest_type: 'city',
+                room_number: '1',
+                units: 'metric',
+                checkout_date: '2023-09-28', //user input
+                locale: 'en-gb',
+                dest_id: '-1746443', //getting from detination endpoint
+                filter_by_currency: 'USD',
+                checkin_date: '2023-09-27', //user input
+                adults_number: '1', 
+                order_by: 'price',
+                categories_filter_ids: 'price::USD-140-190', //get from user input
+                page_number: '0',
+                include_adjacency: 'true'
             },
             headers: {
-                "X-RapidAPI-Key": process.env.X_HOTEL_API_KEY,
-                "X-RapidAPI-Host": "booking-com.p.rapidapi.com",
-            },
+                'X-RapidAPI-Key': process.env.X_HOTEL_API_KEY,
+                'X-RapidAPI-Host': 'booking-com.p.rapidapi.com'
+            }
         };
 
         const response = await axios.request(options);
-        const allHotels = response.data;
+        const allHotels = {};
+
+        if (response.data && response.data.results && response.data.results.length > 0) {
+            // only 10 hotel results
+            for (let i = 0; i < 10; i++) {
+                const hotelKey = `hotel_${i}`;
+                if (response.data.results[i]) {
+                    allHotels[hotelKey] = response.data.results[i];
+                }
+            }
+        }
 
         res.json(allHotels)
     } catch (error) {

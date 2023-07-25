@@ -62,44 +62,43 @@ router.get('/allflights', async function (req, res, next) {
       }
     };
     const response = await axios.request(options);
+
     const allFlightsResult = response.data.getAirFlightRoundTrip.results.result;
     const itinararies = allFlightsResult.itinerary_data;
-    const airlineLink = allFlightsResult.airline_data
-    const flightInformation = [];
+    const airlineLink = allFlightsResult.airline_data;
+    const flightInformation = {};
 
-    for(let i = 0; i < 4; i++) {
-      const key = `airline_${i}`
-      if (airlineLink.hasOwnProperty(key)) {
-        const sliceData = airlineLink[key];
+    for (let i = 0; i < 4; i++) {
+      const airlineKey = `airline_${i}`;
+      if (airlineLink.hasOwnProperty(airlineKey)) {
+        const sliceData = airlineLink[airlineKey];
         const name = sliceData.name;
         const website = sliceData.websiteUrl;
         const phone = sliceData.phoneNumber;
         if (website && phone !== '') {
-          flightInformation.push({
+          flightInformation[airlineKey] = {
             name: name,
             website: website,
             phone: phone,
-          })
+          };
         }
       }
-    }
 
-    for (let i = 0; i < 4; i++) {
-      const key = `itinerary_${i}`;
-      if (itinararies.hasOwnProperty(key)) {
-        const sliceData = itinararies[key].slice_data.slice_0;
+      const itineraryKey = `itinerary_${i}`;
+      if (itinararies.hasOwnProperty(itineraryKey)) {
+        const sliceData = itinararies[itineraryKey].slice_data.slice_0;
         const airline = sliceData.airline;
         const departure = sliceData.departure;
         const arrival = sliceData.arrival;
-        const priceDetails = itinararies[key].price_details.baseline_total_fare;
+        const priceDetails = itinararies[itineraryKey].price_details.baseline_total_fare;
 
-        flightInformation.push({
-          itinerary: key,
+        flightInformation[itineraryKey] = {
+          itinerary: itineraryKey,
           airline: airline,
           departure: departure,
           arrival: arrival,
           price: priceDetails
-        });
+        };
       }
     }
 
@@ -108,14 +107,5 @@ router.get('/allflights', async function (req, res, next) {
     console.log(error)
   }
 })
-//baseline_total_fare
-
-// [
-//   "itinerary_0 : 470.01",
-//   "itinerary_1 : 470.53",
-//   "itinerary_2 : 481.32",
-//   "itinerary_3 : 481.32"
-// ]
-
 
 module.exports = router;

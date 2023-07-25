@@ -3,7 +3,36 @@ const axios = require('axios')
 require('dotenv').config();
 
 
+router.get('/destination', async function (req, res, next) {
+    try {
+        const options = {
+            method: 'GET',
+            url: 'https://booking-com.p.rapidapi.com/v1/hotels/locations',
+            params: {
+                locale: 'en-gb',
+                name: 'Berlin' //input by user
+            },
+            headers: {
+                'X-RapidAPI-Key': process.env.X_HOTEL_API_KEY,
+                'X-RapidAPI-Host': 'booking-com.p.rapidapi.com'
+            }
+        };
 
+        const response = await axios.request(options);
+
+        if (response.data && Array.isArray(response.data) && response.data.length > 0) {
+            // store data in id object
+            const info = response.data.reduce((acc, location) => {
+                acc[location.type] = location;
+                return acc;
+            }, {});
+            res.json(info) //we care about dest id for /information call
+        }
+
+    } catch (error) {
+        console.log(error)
+    }
+})
 
 router.get('/information', async function (req, res, next) {
     try {
@@ -16,10 +45,10 @@ router.get('/information', async function (req, res, next) {
                 units: 'metric',
                 checkout_date: '2023-09-28', //user input
                 locale: 'en-gb',
-                dest_id: '-1746443', //getting from detination endpoint
+                dest_id: '-1746443', //getting from /destination endpoint
                 filter_by_currency: 'USD',
                 checkin_date: '2023-09-27', //user input
-                adults_number: '1', 
+                adults_number: '1',
                 order_by: 'price',
                 categories_filter_ids: 'price::USD-140-190', //get from user input
                 page_number: '0',

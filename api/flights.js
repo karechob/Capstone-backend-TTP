@@ -7,7 +7,7 @@ router.get('/airport', async function (req, res, next) {
     const options = {
       method: 'GET',
       url: 'https://priceline-com-provider.p.rapidapi.com/v1/flights/locations',
-      params: {name: 'New York City'}, //required
+      params: {name: 'Venice Italy'}, //required
       headers: {
         'X-RapidAPI-Key':  process.env.X_FLIGHT_API_KEY,
         'X-RapidAPI-Host': 'priceline-com-provider.p.rapidapi.com'
@@ -21,6 +21,7 @@ router.get('/airport', async function (req, res, next) {
     const airportData = [];
 
     for (const airport of allAirports) {
+      if(airport.lat && airport.lon !== 0)
       airportData.push({
         itemName: airport.itemName,
         id: airport.id,
@@ -50,8 +51,8 @@ router.get('/allflights', async function (req, res, next) {
         departure_date: '2023-12-21,2023-12-25', //need this value from user
         adults: '1', //maximum 8 //need this value from user
         sid: 'iSiX639',
-        origin_airport_code: 'BKK,JFK', //get this value through /airport
-        destination_airport_code: 'JFK,BKK', //get this value through /airport 
+        origin_airport_code: 'BKK,JFK', //get this value through /airport --> airport.id
+        destination_airport_code: 'JFK,BKK', //get this value through /airport  --> airport.id
         number_of_itineraries: '4',
         currency: 'USD'
       },
@@ -62,20 +63,20 @@ router.get('/allflights', async function (req, res, next) {
     };
     const response = await axios.request(options);
     const allFlightsResult = response.data.getAirFlightRoundTrip.results.result;
-    const baselineTotalFare = allFlightsResult.itinerary_data;
-    const prices = [];
+    const itinararies = allFlightsResult.itinerary_data;
+    const flightInformation = [];
 
     for (let i = 0; i < 4; i++) {
       const key = `itinerary_${i}`;
-      if (baselineTotalFare.hasOwnProperty(key)) {
-        const sliceData = baselineTotalFare[key].slice_data.slice_0;
+      if (itinararies.hasOwnProperty(key)) {
+        const sliceData = itinararies[key].slice_data.slice_0;
         const airline = sliceData.airline;
         const departure = sliceData.departure;
         const arrival = sliceData.arrival;
 
-        const priceDetails = baselineTotalFare[key].price_details.baseline_total_fare;
+        const priceDetails = itinararies[key].price_details.baseline_total_fare;
 
-        prices.push({
+        flightInformation.push({
           itinerary: key,
           airline: airline,
           departure: departure,
@@ -85,7 +86,7 @@ router.get('/allflights', async function (req, res, next) {
       }
     }
 
-    res.json(prices);
+    res.json(flightInformation);
   } catch (error) {
     console.log(error)
   }

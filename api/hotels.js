@@ -10,7 +10,7 @@ router.get('/destination', async function (req, res, next) {
             url: 'https://booking-com.p.rapidapi.com/v1/hotels/locations',
             params: {
                 locale: 'en-gb',
-                name: 'Berlin' //input by user
+                name: req.body.name //input by user
             },
             headers: {
                 'X-RapidAPI-Key': process.env.X_HOTEL_API_KEY,

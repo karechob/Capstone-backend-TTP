@@ -1,6 +1,8 @@
 const router = require("express").Router();
 const axios = require('axios')
+const bodyParser = require('body-parser');
 require('dotenv').config();
+
 
 
 router.get('/destination', async function (req, res, next) {
@@ -10,7 +12,7 @@ router.get('/destination', async function (req, res, next) {
             url: 'https://booking-com.p.rapidapi.com/v1/hotels/locations',
             params: {
                 locale: 'en-gb',
-                name: 'Berlin' //input by user
+                name: req.body.name //input by user
             },
             headers: {
                 'X-RapidAPI-Key': process.env.X_HOTEL_API_KEY,
@@ -36,6 +38,10 @@ router.get('/destination', async function (req, res, next) {
 
 router.get('/information', async function (req, res, next) {
     try {
+
+        const checkout_date = req.body.checkin_date;
+         
+
         const options = {
             method: 'GET',
             url: 'https://booking-com.p.rapidapi.com/v2/hotels/search',
@@ -43,14 +49,14 @@ router.get('/information', async function (req, res, next) {
                 dest_type: 'city',
                 room_number: '1',
                 units: 'metric',
-                checkout_date: '2023-09-28', //user input
+                checkout_date: req.body.checkout_date, //user input (2023-08-29)
                 locale: 'en-gb',
-                dest_id: '-1746443', //getting from /destination endpoint
+                dest_id: req.body.dest_id, //getting from /destination endpoint
                 filter_by_currency: 'USD',
-                checkin_date: '2023-09-27', //user input
+                checkin_date: req.body.checkin_date, //user input (2023-08-27)
                 adults_number: '1',
                 order_by: 'price',
-                categories_filter_ids: 'price::USD-140-190', //get from user input
+                categories_filter_ids: req.body.categories_filter_ids, //get from user input (price::USD-140-190)
                 page_number: '0',
                 include_adjacency: 'true'
             },

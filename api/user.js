@@ -166,6 +166,20 @@ router.post("/collaborator", isAuthenticated, async (req, res, next) => {
 });
 
 /*------------------------ Trip Controls -----------------------*/
+router.get("/trip/:id", isAuthenticated, async (req,res,next) => {
+  try {
+    const tripId = req.params.id;
+    const trip = await Trip.findByPk(tripId);
+    if (!trip) {
+      res.status(400).json({ error: "Failed to find trip" });
+    } else {
+      res.status(200).json(trip);
+    }
+  } catch (error) {
+    
+  }
+});
+
 
 // Fetch user trips
 router.get("/trips", isAuthenticated, async (req, res, next) => {
@@ -219,6 +233,7 @@ router.get("/trips", isAuthenticated, async (req, res, next) => {
     }
 
     const trips = user.dataValues.trips;
+    //console.log(trips);
     res.status(200).send(trips);
   } catch (error) {
     next(error);

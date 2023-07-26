@@ -1,7 +1,5 @@
 const router = require("express").Router();
-const { Op, col } = require("sequelize");
 const { User, Trip, Activity, Flight, Hotel } = require("../db/models");
-const isAdmin = require("../middleware/adminMiddleware");
 const { isAuthenticated } = require("../middleware/authMiddleware");
 const Collaborator = require("../db/models/collaborator");
 
@@ -69,7 +67,6 @@ router.get("/record", isAuthenticated, async (req, res, next) => {
 // Update user details
 router.put("/", isAuthenticated, async (req, res, next) => {
   try {
-    console.log(req.user);
     const userId = req.user.id;
     if (!userId) {
       return res.status(403).json({ error: "Access denied" });
@@ -97,7 +94,8 @@ router.delete("/", isAuthenticated, async (req, res, next) => {
     if (!user) {
       res.status(400).json({ error: "Failed to delete user" });
     }
-    //await user.destroy();
+    await user.destroy();
+    console.log("User deleted successfully");
     res.status(200).json({ message: "User deleted successfully" });
   } catch (error) {
     next(error);
@@ -192,7 +190,7 @@ router.get("/trips", isAuthenticated, async (req, res, next) => {
       include: {
         model: Trip,
         as: "trips",
-        attributes: { exclude: ["id"] },
+        attributes: { exclude: [""] },
         include: [
           {
             model: Hotel,
@@ -205,13 +203,11 @@ router.get("/trips", isAuthenticated, async (req, res, next) => {
           {
             model: Activity,
             as: "activities",
-            through: { attributes: [] },
             attributes: { exclude: ["id"] },
           },
           {
             model: Collaborator,
             as: "collaborators",
-            through: { attributes: [] },
             attributes: { exclude: ["id"] },
           },
         ],
@@ -224,29 +220,6 @@ router.get("/trips", isAuthenticated, async (req, res, next) => {
 
     const trips = user.dataValues.trips;
     res.status(200).send(trips);
-  } catch (error) {
-    next(error);
-  }
-});
-
-// Update trip
-router.put("/trip", isAuthenticated, async (req, res, next) => {
-  try {
-    console.log(req.body);
-    const tripId = req.body.id;
-    console.log(req.body.id);
-    const userId = req.user.id;
-
-    if (!userId) {
-      return res.status(403).json({ error: "Access denied" });
-    }
-    const trip = await Trip.findByPk(tripId);
-    if (!trip) {
-      res.status(400).json({ error: "Failed to update trip" });
-    } else {
-      await trip.update(req.body);
-      res.status(200).json({ message: "Trip updated successfully" });
-    }
   } catch (error) {
     next(error);
   }
@@ -310,6 +283,86 @@ router.post("/", isAuthenticated, async (req, res, next) => {
       console.log("Failed to create trip");
       res.status(400).json({ error: "Failed to create trip" });
     }
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Update trip
+router.put("/trip", isAuthenticated, async (req, res, next) => {
+  try {
+    const tripId = req.body.id;
+    const userId = req.user.id;
+
+    if (!userId) {
+      return res.status(403).json({ error: "Access denied" });
+    }
+
+    const trip = await Trip.findByPk(tripId);
+    if (!trip) {
+      return res.status(400).json({ error: "Failed to update trip" });
+    }
+
+    if (trip.ownerId !== userId) {
+      return res
+        .status(403)
+        .json({ error: "You are not the owner of this trip" });
+    }
+
+    const { hotel, flight, activities, collaborators, ...tripDetails } =
+      req.body;
+
+    await trip.update(tripDetails);
+
+    if (hotel) {
+      const existingHotel = await Hotel.findOne({ where: { tripId } });
+      if (existingHotel) {
+        console.log("Updating hotel");
+        await existingHotel.update(hotel);
+      }
+    }
+
+    if (flight) {
+      const existingFlight = await Flight.findOne({ where: { tripId } });
+      if (existingFlight) {
+        console.log("updating flight");
+
+        await existingFlight.update(flight);
+      }
+    }
+
+    if (activities && Array.isArray(activities)) {
+      for (const activityData of activities) {
+        try {
+          const existingActivity = await Activity.findOne({
+            where: { tripId: tripId },
+          });
+          if (existingActivity) {
+            console.log("updating activity");
+            await existingActivity.update(activityData);
+          } else {
+            console.log("activity not found");
+          }
+        } catch (error) {
+          console.error("Error while updating activity:", error);
+        }
+      }
+    }
+
+    if (collaborators && Array.isArray(collaborators)) {
+      for (const collaboratorData of collaborators) {
+        const existingCollaborator = await Collaborator.findOne({
+          where: { tripId: tripId },
+        });
+        if (existingCollaborator) {
+          console.log("updating collaborator");
+
+          await existingCollaborator.update(collaboratorData);
+        }
+      }
+    }
+
+    res.status(200).json({ message: "Trip updated successfully" });
   } catch (error) {
     next(error);
   }

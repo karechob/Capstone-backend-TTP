@@ -79,7 +79,7 @@ const setupRoutes = (app) => {
 // Start server and sync the db
 const startServer = async (app, port) => {
   await sessionStore.sync();
-  await db.sync();
+  await db.sync({ force: false });
   app.listen(port, () => console.log(`Server is on port:${port}`));
   return app;
 };

@@ -30,13 +30,11 @@ router.get("/", isAuthenticated, isAdmin, async (req, res, next) => {
             {
               model: Activity,
               as: "activities",
-              through: { attributes: [] },
               attributes: { exclude: ["id"] },
             },
             {
               model: Collaborator,
               as: "collaborators",
-              through: { attributes: [] },
               attributes: { exclude: ["id"] },
             },
           ],
@@ -79,7 +77,7 @@ router.delete(
         return res.status(404).send("User not found");
       }
 
-      //await user.destroy();
+      await user.destroy();
       res.status(200).send("User deleted successfully");
     } catch (error) {
       next(error);

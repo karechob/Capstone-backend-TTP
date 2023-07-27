@@ -5,7 +5,7 @@ require('dotenv').config();
 
 
 
-router.get('/destination', async function (req, res, next) {
+router.post('/destination', async function (req, res, next) {
     try {
         const options = {
             method: 'GET',
@@ -36,11 +36,12 @@ router.get('/destination', async function (req, res, next) {
     }
 })
 
-router.get('/information', async function (req, res, next) {
+
+router.post('/information', async function (req, res, next) {
     try {
 
         const checkout_date = req.body.checkin_date;
-         
+
 
         const options = {
             method: 'GET',

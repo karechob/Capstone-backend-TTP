@@ -2,7 +2,8 @@ const router = require("express").Router();
 const axios = require('axios')
 require('dotenv').config();
 
-router.get('/departure', async function (req, res, next) {
+router.post('/departure', async function (req, res, next) {
+  console.log("this is req body", req.body.name)
   try {
     const options = {
       method: 'GET',
@@ -41,7 +42,7 @@ router.get('/departure', async function (req, res, next) {
   }
 })
 
-router.get('/return', async function (req, res, next) {
+router.post('/return', async function (req, res, next) {
   try {
     const options = {
       method: 'GET',
@@ -81,7 +82,7 @@ router.get('/return', async function (req, res, next) {
 })
 
 
-router.get('/allflights', async function (req, res, next) {
+router.post('/allflights', async function (req, res, next) {
   try {
 
     const departureDate = req.body.departure;

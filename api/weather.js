@@ -12,10 +12,10 @@ router.use((req, res, next) => {
   next();
 });
 
-router.get("/getWeather/:slug", async (req, res) => {
+router.get("/getWeather/:slug/:startdate/:enddate", async (req, res) => {
 	try {
 		const response = await axios.get(
-			`https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${req.params.slug}?unitGroup=metric&key=AWCP42Q65DY8TJUX3ZUEACCQZ&contentType=json`
+			`https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${req.params.slug}/${req.params.startdate}/${req.params.enddate}?unitGroup=metric&key=${process.env.WEATHER_API_KEY}&contentType=json`
 		);
         console.log("response: " ,response.data)
         res.json(response.data);

@@ -166,17 +166,42 @@ router.post("/collaborator", isAuthenticated, async (req, res, next) => {
 });
 
 /*------------------------ Trip Controls -----------------------*/
-router.get("/trip/:id", isAuthenticated, async (req,res,next) => {
+router.get("/trip/:id", isAuthenticated, async (req, res, next) => {
   try {
     const tripId = req.params.id;
-    const trip = await Trip.findByPk(tripId);
+    const trip = await Trip.findByPk(tripId, {
+      attributes: { exclude: ["id"] },
+      include: [
+        {
+          model: Hotel,
+          attributes: { exclude: ["id"] },
+        },
+        {
+          model: Flight,
+          attributes: { exclude: ["id"] },
+        },
+        {
+          model: Activity,
+          as: "activities",
+          attributes: { exclude: ["id"] },
+        },
+        {
+          model: Collaborator,
+          as: "collaborators",
+          attributes: { exclude: ["id"] },
+        },
+      ],
+    });
+
     if (!trip) {
-      res.status(400).json({ error: "Failed to find trip" });
+      res.status(404).json({ error: "Failed to find trip" });
     } else {
       res.status(200).json(trip);
     }
   } catch (error) {
-    
+    // Log the error and return a 500 status code with an error message
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
   }
 });
 

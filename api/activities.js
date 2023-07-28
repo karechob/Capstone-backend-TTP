@@ -5,7 +5,6 @@ require("dotenv").config();
 router.post("/allactivities", async (req, res, next) => {
   try {
     console.log("Fetching activities");
-
     const resultsArray = [];
 
     // Takes in a destination param provided from the frontend to request a single place from that location
@@ -24,7 +23,7 @@ router.post("/allactivities", async (req, res, next) => {
     // Calling the nearbySearch request will return a list of places in the area provided by the latitude and longitude. Limited to only return tourist attractions or related places.
     var tourist_attraction = {
       method: "get",
-      url: `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${latitude}%2C${longitude}&radius=1500&type=tourist_attraction&key=${process.env.PLACES_API_KEY}`,
+      url: `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${latitude}%2C${longitude}&radius=50000&type=tourist_attraction&key=${process.env.PLACES_API_KEY}`,
       headers: {},
     };
 
@@ -33,7 +32,7 @@ router.post("/allactivities", async (req, res, next) => {
     // Another nearbySearch request with the type specified as restaurants or food places.
     var food = {
       method: "get",
-      url: `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${latitude}%2C${longitude}&radius=1500&type=restaurant&key=${process.env.PLACES_API_KEY}`,
+      url: `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${latitude}%2C${longitude}&radius=50000&minprice=${req.body.activitiesBudgetRange}&type=restaurant&key=${process.env.PLACES_API_KEY}`,
       headers: {},
     };
 

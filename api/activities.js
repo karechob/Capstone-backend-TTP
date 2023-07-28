@@ -4,6 +4,8 @@ require("dotenv").config();
 
 router.post("/allactivities", async (req, res, next) => {
   try {
+    console.log("Fetching activities");
+
     const resultsArray = [];
 
     // Takes in a destination param provided from the frontend to request a single place from that location
@@ -37,7 +39,7 @@ router.post("/allactivities", async (req, res, next) => {
 
     const food_Search = axios.request(food);
 
-    // Using a Promise.allSettled() method to handle the multiple axios requests. 
+    // Using a Promise.allSettled() method to handle the multiple axios requests.
     const results = await Promise.allSettled([
       tourist_attraction_Search,
       food_Search,

@@ -23,6 +23,7 @@ function processAirportData(allAirports) {
 
 router.post("/allflights", async function (req, res, next) {
   try {
+    console.log("Fetching flights");
     const departureOptions = {
       method: "GET",
       url: "https://priceline-com-provider.p.rapidapi.com/v1/flights/locations",

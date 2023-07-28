@@ -6,13 +6,14 @@ const Collaborator = require("../db/models/collaborator");
 /*------------------------ User Controls -----------------------*/
 // Fetch user details
 router.get("/", isAuthenticated, (req, res, next) => {
-  const { name, username, email, createdAt, updatedAt } = req.user;
+  const { name, username, email, createdAt, updatedAt, image } = req.user;
   const user = {
     name,
     username,
     email,
     createdAt,
     updatedAt,
+    image,
   };
 
   // if (googleId) {
@@ -199,12 +200,10 @@ router.get("/trip/:id", isAuthenticated, async (req, res, next) => {
       res.status(200).json(trip);
     }
   } catch (error) {
-    // Log the error and return a 500 status code with an error message
     console.error(error);
     res.status(500).json({ error: "Internal server error" });
   }
 });
-
 
 // Fetch user trips
 router.get("/trips", isAuthenticated, async (req, res, next) => {

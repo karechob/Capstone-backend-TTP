@@ -46,8 +46,12 @@ router.post("/allactivities", async (req, res, next) => {
     ]);
 
     // Pushing the necessary response data items from the results to a resultsArray
-    results.map((item, index) => {
-      resultsArray.push(item.value.data.results);
+    results.map((obj) => {
+      obj.value.data.results.map((item, index) => {
+        if (index < 5) {
+          resultsArray.push(item);
+        }
+      });
     });
 
     //console.log(resultsArray);

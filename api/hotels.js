@@ -4,6 +4,8 @@ require("dotenv").config();
 
 router.post("/information", async function (req, res, next) {
   try {
+    console.log("Fetching hotels");
+
     const destinationOptions = {
       method: "GET",
       url: "https://booking-com.p.rapidapi.com/v1/hotels/locations",

@@ -49,7 +49,7 @@ router.post("/allactivities", async (req, res, next) => {
     });
 
     //console.log(resultsArray);
-    //res.json(resultsArray);
+    res.json(resultsArray);
   } catch (error) {
     console.error(error);
   }

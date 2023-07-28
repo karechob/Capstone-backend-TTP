@@ -1,123 +1,82 @@
 const router = require("express").Router();
-const axios = require('axios')
-require('dotenv').config();
+const axios = require("axios");
+require("dotenv").config();
 
-router.post('/departure', async function (req, res, next) {
-  console.log("this is req body", req.body.name)
-  try {
-    const options = {
-      method: 'GET',
-      url: 'https://priceline-com-provider.p.rapidapi.com/v1/flights/locations',
-      params: {name: req.body.name}, //required (sample location)
-      headers: {
-        'X-RapidAPI-Key':  process.env.X_FLIGHT_API_KEY,
-        'X-RapidAPI-Host': 'priceline-com-provider.p.rapidapi.com'
-      }
-    };
-    //lat (doesnt exist if its 0)
-    //long (doesnt exist if its 0)
-
-    const response = await axios.request(options);
-    const allAirports = response.data;
-    const airportData = [];
-
-    for (const airport of allAirports) {
-      if(airport.lat && airport.lon !== 0)
-      airportData.push({
+function processAirportData(allAirports) {
+  for (const airport of allAirports) {
+    if (airport.lat && airport.lon !== 0) {
+      return {
         itemName: airport.itemName,
-        departureAirport: airport.id,
+        airportId: airport.id,
         stateCode: airport.stateCode,
         countryCode: airport.countryCode,
         cityName: airport.cityName,
         provinceName: airport.provinceName,
         entered: airport.entered,
         lat: airport.lat ? airport.lat : 0,
-        lon: airport.lon ? airport.lon : 0
-      });
+        lon: airport.lon ? airport.lon : 0,
+      };
     }
-    
-    res.json(airportData)
-  } catch (error) {
-    console.log(error)
   }
-})
+  return null;
+}
 
-router.post('/return', async function (req, res, next) {
+router.post("/allflights", async function (req, res, next) {
   try {
-    const options = {
-      method: 'GET',
-      url: 'https://priceline-com-provider.p.rapidapi.com/v1/flights/locations',
-      params: {name: req.body.name}, //required (sample location)
+    const departureOptions = {
+      method: "GET",
+      url: "https://priceline-com-provider.p.rapidapi.com/v1/flights/locations",
+      params: { name: req.body.destination }, // Replace with the correct field for the departure city
       headers: {
-        'X-RapidAPI-Key':  process.env.X_FLIGHT_API_KEY,
-        'X-RapidAPI-Host': 'priceline-com-provider.p.rapidapi.com'
-      }
+        "X-RapidAPI-Key": process.env.X_RAPIDAPI_KEY,
+        "X-RapidAPI-Host": "priceline-com-provider.p.rapidapi.com",
+      },
     };
-    //lat (doesnt exist if its 0)
-    //long (doesnt exist if its 0)
 
-    const response = await axios.request(options);
-    const allAirports = response.data;
-    const airportData = [];
+    const returnOptions = {
+      method: "GET",
+      url: "https://priceline-com-provider.p.rapidapi.com/v1/flights/locations",
+      params: { name: req.body.origin }, // Replace with the correct field for the return city
+      headers: {
+        "X-RapidAPI-Key": process.env.X_RAPIDAPI_KEY,
+        "X-RapidAPI-Host": "priceline-com-provider.p.rapidapi.com",
+      },
+    };
 
-    for (const airport of allAirports) {
-      if(airport.lat && airport.lon !== 0)
-      airportData.push({
-        itemName: airport.itemName,
-        returnAirport: airport.id,
-        stateCode: airport.stateCode,
-        countryCode: airport.countryCode,
-        cityName: airport.cityName,
-        provinceName: airport.provinceName,
-        entered: airport.entered,
-        lat: airport.lat ? airport.lat : 0,
-        lon: airport.lon ? airport.lon : 0
-      });
-    }
-    
-    res.json(airportData)
-  } catch (error) {
-    console.log(error)
-  }
-})
+    const [departureResponse, returnResponse] = await Promise.all([
+      axios.request(departureOptions),
+      axios.request(returnOptions),
+    ]);
 
+    const departureAirport = processAirportData(departureResponse.data);
+    const returnAirport = processAirportData(returnResponse.data);
 
-router.post('/allflights', async function (req, res, next) {
-  try {
-
-    const departureDate = req.body.departure;
-    const returnDate = req.body.return;
-    const departureAndReturnDates = `${departureDate},${returnDate}`;
-
-    const departureAirport = req.body.departureAirport;
-    const returnAirport = req.body.returnAirport;
-    const origin = `${departureAirport},${returnAirport}`;
-    const destination = `${returnAirport},${departureAirport}`;
+    const departureAndReturnDates = `${req.body.startDate},${req.body.endDate}`;
+    const origin = `${departureAirport.airportId},${returnAirport.airportId}`;
+    const destination = `${returnAirport.airportId},${departureAirport.airportId}`;
 
     const options = {
-      method: 'GET',
-      url: 'https://priceline-com-provider.p.rapidapi.com/v2/flight/roundTrip',
+      method: "GET",
+      url: "https://priceline-com-provider.p.rapidapi.com/v2/flight/roundTrip",
       params: {
         departure_date: departureAndReturnDates, //need this value from user '2023-08-01,2023-08-09'
-        adults: '1', //maximum 8 
-        sid: 'iSiX639',
+        adults: "1", //maximum 8
+        sid: "iSiX639",
         origin_airport_code: origin, //get this value through /airport --> airport.id
         destination_airport_code: destination, //get this value through /airport  --> airport.id
-        number_of_itineraries: '4',
-        currency: 'USD'
+        number_of_itineraries: "4",
+        currency: "USD",
       },
       headers: {
-        'X-RapidAPI-Key': process.env.X_FLIGHT_API_KEY,
-        'X-RapidAPI-Host': 'priceline-com-provider.p.rapidapi.com'
-      }
+        "X-RapidAPI-Key": process.env.X_RAPIDAPI_KEY,
+        "X-RapidAPI-Host": "priceline-com-provider.p.rapidapi.com",
+      },
     };
     const response = await axios.request(options);
-
     const allFlightsResult = response.data.getAirFlightRoundTrip.results.result;
     const itinararies = allFlightsResult.itinerary_data;
     const airlineLink = allFlightsResult.airline_data;
     const flightInformation = {};
-
     for (let i = 0; i < 4; i++) {
       const airlineKey = `airline_${i}`;
       if (airlineLink.hasOwnProperty(airlineKey)) {
@@ -125,7 +84,7 @@ router.post('/allflights', async function (req, res, next) {
         const name = sliceData.name;
         const website = sliceData.websiteUrl;
         const phone = sliceData.phoneNumber;
-        if (website && phone !== '') {
+        if (website && phone !== "") {
           flightInformation[airlineKey] = {
             name: name,
             website: website,
@@ -140,22 +99,23 @@ router.post('/allflights', async function (req, res, next) {
         const airline = sliceData.airline;
         const departure = sliceData.departure;
         const arrival = sliceData.arrival;
-        const priceDetails = itinararies[itineraryKey].price_details.baseline_total_fare;
+        const priceDetails =
+          itinararies[itineraryKey].price_details.baseline_total_fare;
 
         flightInformation[itineraryKey] = {
           itinerary: itineraryKey,
           airline: airline,
           departure: departure,
           arrival: arrival,
-          price: priceDetails
+          price: priceDetails,
         };
       }
     }
 
     res.json(flightInformation);
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
-})
+});
 
 module.exports = router;

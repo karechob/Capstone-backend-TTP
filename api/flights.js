@@ -23,7 +23,6 @@ function processAirportData(allAirports) {
 
 router.post("/allflights", async function (req, res, next) {
   try {
-    console.log("Fetching flights");
     const departureOptions = {
       method: "GET",
       url: "https://priceline-com-provider.p.rapidapi.com/v1/flights/locations",
@@ -78,40 +77,43 @@ router.post("/allflights", async function (req, res, next) {
     const itinararies = allFlightsResult.itinerary_data;
     const airlineLink = allFlightsResult.airline_data;
     const flightInformation = {};
-    for (let i = 0; i < 4; i++) {
-      const airlineKey = `airline_${i}`;
-      if (airlineLink.hasOwnProperty(airlineKey)) {
-        const sliceData = airlineLink[airlineKey];
-        const name = sliceData.name;
-        const website = sliceData.websiteUrl;
-        const phone = sliceData.phoneNumber;
-        if (website && phone !== "") {
-          flightInformation[airlineKey] = {
-            name: name,
-            website: website,
-            phone: phone,
+
+    Object.keys(itinararies).forEach((itineraryKey) => {
+      const sliceData = itinararies[itineraryKey].slice_data.slice_0;
+      const itineraryAirline = sliceData.airline;
+      const departure = sliceData.departure;
+      const arrival = sliceData.arrival;
+      const priceDetails = itinararies[itineraryKey].price_details.baseline_total_fare;
+
+      // Check if there is a matching airline in airlineLink
+      for (const airlineKey in airlineLink) {
+        const airlineData = airlineLink[airlineKey];
+        const airlineName = airlineData.name;
+
+        // If the airline name matches, add it to the flightInformation
+        if (itineraryAirline.name === airlineName) {
+          const website = airlineData.websiteUrl;
+          const phone = airlineData.phoneNumber;
+          const logo = airlineData.logo;
+
+          // Add the airline information and itinerary information to flightInformation
+          flightInformation[itineraryKey] = {
+            itinerary: itineraryKey,
+            airline: {
+              name: airlineName,
+              website: website,
+              phone: phone,
+              logo: logo,
+            },
+            departure: departure,
+            arrival: arrival,
+            price: priceDetails,
           };
+
+          break; // Break the loop once a matching airline is found
         }
       }
-
-      const itineraryKey = `itinerary_${i}`;
-      if (itinararies.hasOwnProperty(itineraryKey)) {
-        const sliceData = itinararies[itineraryKey].slice_data.slice_0;
-        const airline = sliceData.airline;
-        const departure = sliceData.departure;
-        const arrival = sliceData.arrival;
-        const priceDetails =
-          itinararies[itineraryKey].price_details.baseline_total_fare;
-
-        flightInformation[itineraryKey] = {
-          itinerary: itineraryKey,
-          airline: airline,
-          departure: departure,
-          arrival: arrival,
-          price: priceDetails,
-        };
-      }
-    }
+    });
 
     res.json(flightInformation);
   } catch (error) {

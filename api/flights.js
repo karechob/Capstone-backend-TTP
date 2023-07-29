@@ -94,6 +94,7 @@ router.post("/allflights", async function (req, res, next) {
         if (itineraryAirline.name === airlineName) {
           const website = airlineData.websiteUrl;
           const phone = airlineData.phoneNumber;
+          const logo = airlineData.logo;
 
           // Add the airline information and itinerary information to flightInformation
           flightInformation[itineraryKey] = {
@@ -102,6 +103,7 @@ router.post("/allflights", async function (req, res, next) {
               name: airlineName,
               website: website,
               phone: phone,
+              logo: logo,
             },
             departure: departure,
             arrival: arrival,

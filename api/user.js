@@ -166,12 +166,54 @@ router.post("/collaborator", isAuthenticated, async (req, res, next) => {
   }
 });
 
+// delete collaborator
+router.delete(
+  "/trips/:tripId/collaborators/:collaboratorId",
+  isAuthenticated,
+  async (req, res, next) => {
+    try {
+      const tripId = req.params.tripId;
+      const userId = req.user.id;
+      const collaboratorId = req.params.collaboratorId;
+
+      if (!userId) {
+        return res.status(403).json({ error: "Access denied" });
+      }
+
+      const trip = await Trip.findByPk(tripId);
+      if (!trip) {
+        return res.status(400).json({ error: "Failed to find the trip" });
+      }
+
+      if (trip.ownerId !== userId) {
+        return res
+          .status(403)
+          .json({ error: "You are not the owner of this trip" });
+      }
+
+      const existingCollaborator = await Collaborator.findOne({
+        where: { id: collaboratorId, tripId: tripId },
+      });
+
+      if (!existingCollaborator) {
+        return res.status(404).json({ error: "Collaborator not found" });
+      }
+
+      await existingCollaborator.destroy();
+
+      res.status(200).json({ message: "Collaborator deleted successfully" });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
 /*------------------------ Trip Controls -----------------------*/
 router.get("/trip/:id", isAuthenticated, async (req, res, next) => {
   try {
     const tripId = req.params.id;
     const trip = await Trip.findByPk(tripId, {
-      attributes: { exclude: ["id"] },
+      attributes: { exclude: [""] },
       include: [
         {
           model: Hotel,
@@ -189,7 +231,7 @@ router.get("/trip/:id", isAuthenticated, async (req, res, next) => {
         {
           model: Collaborator,
           as: "collaborators",
-          attributes: { exclude: ["id"] },
+          attributes: { exclude: [""] },
         },
       ],
     });
@@ -246,7 +288,7 @@ router.get("/trips", isAuthenticated, async (req, res, next) => {
           {
             model: Collaborator,
             as: "collaborators",
-            attributes: { exclude: ["id"] },
+            attributes: { exclude: [""] },
           },
         ],
       },
@@ -332,7 +374,6 @@ router.put("/trip", isAuthenticated, async (req, res, next) => {
   try {
     const tripId = req.body.id;
     const userId = req.user.id;
-
     if (!userId) {
       return res.status(403).json({ error: "Access denied" });
     }
@@ -348,58 +389,60 @@ router.put("/trip", isAuthenticated, async (req, res, next) => {
         .json({ error: "You are not the owner of this trip" });
     }
 
-    const { hotel, flight, activities, collaborators, ...tripDetails } =
-      req.body;
+    // const { hotel, flight, activities, collaborators, ...tripDetails } =
+    //   req.body;
+    const { collaborators, ...tripDetails } = req.body;
 
+    console.log("Updating trip");
     await trip.update(tripDetails);
 
-    if (hotel) {
-      const existingHotel = await Hotel.findOne({ where: { tripId } });
-      if (existingHotel) {
-        console.log("Updating hotel");
-        await existingHotel.update(hotel);
-      }
-    }
+    // if (hotel) {
+    //   const existingHotel = await Hotel.findOne({ where: { tripId } });
+    //   if (existingHotel) {
+    //     console.log("Updating hotel");
+    //     await existingHotel.update(hotel);
+    //   }
+    // }
 
-    if (flight) {
-      const existingFlight = await Flight.findOne({ where: { tripId } });
-      if (existingFlight) {
-        console.log("updating flight");
+    // if (flight) {
+    //   const existingFlight = await Flight.findOne({ where: { tripId } });
+    //   if (existingFlight) {
+    //     console.log("updating flight");
 
-        await existingFlight.update(flight);
-      }
-    }
+    //     await existingFlight.update(flight);
+    //   }
+    // }
 
-    if (activities && Array.isArray(activities)) {
-      for (const activityData of activities) {
-        try {
-          const existingActivity = await Activity.findOne({
-            where: { tripId: tripId },
-          });
-          if (existingActivity) {
-            console.log("updating activity");
-            await existingActivity.update(activityData);
-          } else {
-            console.log("activity not found");
-          }
-        } catch (error) {
-          console.error("Error while updating activity:", error);
-        }
-      }
-    }
+    // if (activities && Array.isArray(activities)) {
+    //   for (const activityData of activities) {
+    //     try {
+    //       const existingActivity = await Activity.findOne({
+    //         where: { tripId: tripId },
+    //       });
+    //       if (existingActivity) {
+    //         console.log("updating activity");
+    //         await existingActivity.update(activityData);
+    //       } else {
+    //         console.log("activity not found");
+    //       }
+    //     } catch (error) {
+    //       console.error("Error while updating activity:", error);
+    //     }
+    //   }
+    // }
 
-    if (collaborators && Array.isArray(collaborators)) {
-      for (const collaboratorData of collaborators) {
-        const existingCollaborator = await Collaborator.findOne({
-          where: { tripId: tripId },
-        });
-        if (existingCollaborator) {
-          console.log("updating collaborator");
+    // if (collaborators && Array.isArray(collaborators)) {
+    //   for (const collaboratorData of collaborators) {
+    //     const existingCollaborator = await Collaborator.findOne({
+    //       where: { tripId: tripId },
+    //     });
+    //     if (existingCollaborator) {
+    //       console.log("updating collaborator");
 
-          await existingCollaborator.update(collaboratorData);
-        }
-      }
-    }
+    //       await existingCollaborator.update(collaboratorData);
+    //     }
+    //   }
+    // }
 
     res.status(200).json({ message: "Trip updated successfully" });
   } catch (error) {

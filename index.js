@@ -1,4 +1,5 @@
 const express = require("express");
+const bodyParser = require("body-parser");
 const db = require("./db");
 const cors = require("cors");
 const session = require("express-session");
@@ -45,8 +46,8 @@ const configSession = () => ({
 
 // Middleware setup
 const setupMiddleware = (app) => {
-  app.use(express.json());
-  app.use(express.urlencoded({ extended: true }));
+  app.use(bodyParser.json()); 
+  app.use(bodyParser.urlencoded({ extended: true }));
   app.use(
     cors({
       origin: "http://localhost:3000",

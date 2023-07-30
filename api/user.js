@@ -203,7 +203,8 @@ router.delete(
 
       res.status(200).json({ message: "Collaborator deleted successfully" });
     } catch (error) {
-      next(error);
+      console.log("Collaborator not found");
+      next();
     }
   }
 );
@@ -250,7 +251,7 @@ router.get("/trip/:id", isAuthenticated, async (req, res, next) => {
 // Fetch user trips
 router.get("/trips", isAuthenticated, async (req, res, next) => {
   try {
-    const userId = req.user.id;
+    const userId = req.user.dataValues.id;
     if (!userId) {
       return res.status(403).json({ error: "Access denied" });
     }

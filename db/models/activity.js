@@ -23,7 +23,7 @@ const Activity = db.define("activity", {
     allowNull: true,
   },
   place_images: {
-    type: DataTypes.ARRAY,
+    type: DataTypes.JSON,
     allowNull: true,
   },
   map_url: {

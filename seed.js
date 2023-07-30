@@ -76,7 +76,6 @@ const seed = async () => {
       price_level: 0,
       rating: 5,
       popularity: 2000,
-      place_images: [],
       map_url: "example.com",
     });
 
@@ -87,7 +86,6 @@ const seed = async () => {
       price_level: 4,
       rating: 4.6,
       popularity: 35345,
-      place_images: [],
       map_url: "example2.com",
     });
 
@@ -98,10 +96,9 @@ const seed = async () => {
       price_level: 3,
       rating: 4.3,
       popularity: 3324,
-      place_images: [],
       map_url: "example3.com",
     });
-    
+
     const flight1 = await Flight.create({
       airline: "Airline A",
       cost: 200,

@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const db = require("./db");
@@ -7,7 +8,6 @@ const SequelizeStore = require("connect-session-sequelize")(session.Store);
 const passport = require("passport");
 const crypto = require("crypto");
 const {User} = require("./db/models");
-require("dotenv").config();
 
 const app = express();
 

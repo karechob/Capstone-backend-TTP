@@ -6,7 +6,7 @@ const session = require("express-session");
 const SequelizeStore = require("connect-session-sequelize")(session.Store);
 const passport = require("passport");
 const crypto = require("crypto");
-const User = require("./db/models/user");
+const {User} = require("./db/models");
 require("dotenv").config();
 
 const app = express();

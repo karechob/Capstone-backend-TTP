@@ -70,18 +70,38 @@ const seed = async () => {
     });
 
     const activity1 = await Activity.create({
-      name: "Activity 1",
+      name: "Activity 1",     
       cost: 50,
+      type: "park",
+      price_level: 0,
+      rating: 5,
+      popularity: 2000,
+      place_images: [],
+      map_url: "example.com",
     });
+
     const activity2 = await Activity.create({
       name: "Activity 2",
       cost: 100,
+      type: "restaurant",
+      price_level: 4,
+      rating: 4.6,
+      popularity: 35345,
+      place_images: [],
+      map_url: "example2.com",
     });
+
     const activity3 = await Activity.create({
       name: "Activity 3",
       cost: 150,
+      type: "tourist_attraction",
+      price_level: 3,
+      rating: 4.3,
+      popularity: 3324,
+      place_images: [],
+      map_url: "example3.com",
     });
-
+    
     const flight1 = await Flight.create({
       airline: "Airline A",
       cost: 200,

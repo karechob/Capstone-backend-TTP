@@ -6,8 +6,11 @@ router.use("/flights", require("./flights"));
 router.use("/hotels", require("./hotels"));
 router.use("/teleport", require("./teleport"));
 router.use("/activities", require("./activities"));
-router.use("/weather", require("./weather"));
 router.use("/citySearch", require("./citySearch"));
+
+/* Commenting this out to implement at a later time
+router.use("/weather", require("./weather"));
+*/
 
 router.use((req, res, next) => {
   const error = new Error("404 Not Found");

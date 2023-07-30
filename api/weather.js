@@ -1,3 +1,5 @@
+/*  --- Commented to implement to at a later time ---
+
 const router = require("express").Router();
 const axios = require("axios");
 require("dotenv").config();
@@ -34,3 +36,4 @@ router.get("/getWeather/:slug/:startdate/:enddate", async (req, res) => {
 });
 
 module.exports = router;
+*/

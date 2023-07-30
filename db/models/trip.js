@@ -23,10 +23,11 @@ const Trip = db.define("trip", {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  weather: {
-    type: DataTypes.STRING,
-    allowNull: true,
-  },
+
+  // weather: {
+  //   type: DataTypes.STRING,
+  //   allowNull: true,
+  // },
 
   startDate: {
     type: DataTypes.DATE,

@@ -12,6 +12,11 @@ require("dotenv").config();
 const PORT = 8080;
 const sessionStore = new SequelizeStore({ db });
 
+express.get("/", (req, res) => {
+  res.send("Express on Vercel");
+});
+
+
 // Helper functions
 const serializeUser = (user, done) => done(null, user.id);
 const deserializeUser = async (id, done) => {
@@ -95,3 +100,5 @@ const configureApp = async (port) => {
 };
 
 configureApp(PORT);
+
+module.exports = express;

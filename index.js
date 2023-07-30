@@ -12,6 +12,11 @@ require("dotenv").config();
 const PORT = 8080;
 const sessionStore = new SequelizeStore({ db });
 
+express.get("/", (req, res) => {
+  res.send("Express on Vercel 🥳🤩");
+});
+
+
 // Helper functions
 const serializeUser = (user, done) => done(null, user.id);
 const deserializeUser = async (id, done) => {
@@ -75,15 +80,6 @@ const setupPassport = () => {
 const setupRoutes = (app) => {
   app.use("/api", require("./api"));
   app.use("/auth", require("./auth"));
-};
-
-exports.handler = async (req, res) => {
-
-  if (req.method === "GET" && req.url === "/") {
-    res.status(200).send("Express on Vercel");
-  } else {
-    res.status(404).send("Not Found");
-  }
 };
 
 // Start server and sync the db

@@ -1,6 +1,5 @@
 const db = require("./db");
-const { User, Trip, Activity, Hotel, Flight } = require("./db/models");
-const Collaborator = require("./db/models/collaborator");
+const { User, Trip, Activity, Hotel, Flight, Collaborator } = require("./db/models");
 
 const seed = async () => {
   try {

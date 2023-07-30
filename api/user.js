@@ -1,7 +1,6 @@
 const router = require("express").Router();
-const { User, Trip, Activity, Flight, Hotel } = require("../db/models");
+const { User, Trip, Activity, Flight, Hotel, Collaborator } = require("../db/models");
 const { isAuthenticated } = require("../middleware/authMiddleware");
-const Collaborator = require("../db/models/collaborator");
 
 /*------------------------ User Controls -----------------------*/
 // Fetch user details

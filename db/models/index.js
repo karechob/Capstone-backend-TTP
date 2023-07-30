@@ -60,4 +60,5 @@ module.exports = {
   Activity,
   Flight,
   Hotel,
+  Collaborator,
 };

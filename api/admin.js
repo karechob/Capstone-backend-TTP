@@ -1,6 +1,5 @@
 const router = require("express").Router();
-const { Flight, User, Trip, Hotel, Activity } = require("../db/models");
-const Collaborator = require("../db/models/collaborator");
+const { Flight, User, Trip, Hotel, Activity, Collaborator } = require("../db/models");
 const isAdmin = require("../middleware/adminMiddleware");
 const { isAuthenticated } = require("../middleware/authMiddleware");
 

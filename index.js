@@ -13,7 +13,7 @@ const app = express();
 
 const sessionStore = new SequelizeStore({ db });
 
-const PORT = 8080;
+const PORT = process.env.PORT || 8080;
 
  app.use(bodyParser.json()); 
  app.use(bodyParser.urlencoded({ extended: true }));
@@ -21,7 +21,7 @@ const PORT = 8080;
  //const sessionStore = new SequelizeStore({ db });
 
 app.get("/", (req, res) => {
-  res.send("Express on Vercel 🥳🤩");
+  res.send("Express on Vercel 🥳🤩 !!! with port ", PORT);
 });
 
 
@@ -52,10 +52,12 @@ const configSession = () => ({
   store: sessionStore,
   resave: false,
   saveUninitialized: false,
+  proxy: true,
   cookie: {
     maxAge: 8 * 60 * 60 * 1000,
     httpOnly: true,
-    path: "/",
+    secure: process.env.NODE_ENV == "dev" ? false : true,
+    sameSite: process.env.NODE_ENV == "dev" ? false : "none",
   },
 });
 
@@ -63,11 +65,16 @@ const configSession = () => ({
 const setupMiddleware = (app) => {
   app.use(
     cors({
-      origin: "http://localhost:3000",
+      origin: process.env.FRONTEND_URL || "http://localhost:3000",
       methods: "GET, HEAD, PUT, PATCH, POST, DELETE",
       credentials: true,
+      allowedHeaders:
+        "Authorization, X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version",
+      preflightContinue: true,
     })
   );
+  // trust proxy from hosting services like vercel to send cookies over https
+  app.enable("trust proxy");
   app.use(session(configSession()));
   app.use(passport.initialize());
   app.use(passport.session());
@@ -100,7 +107,6 @@ const startServer = async (app, port) => {
 
 // Configure all functions in one major function
 const configureApp = async (port) => {
-  const app = express();
   setupPassport();
   setupMiddleware(app);
   setupRoutes(app);
@@ -109,4 +115,4 @@ const configureApp = async (port) => {
 
 configureApp(PORT);
 
-module.exports = express;
+module.exports = app;

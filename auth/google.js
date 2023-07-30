@@ -49,7 +49,7 @@ router.get(
 router.get(
   "/callback",
   passport.authenticate("google", {
-    failureRedirect: "http://localhost:3000/login",
+    failureRedirect: `${process.env.FRONTEND_URL}/login`,
   }),
   async (req, res) => {
     console.log("Google authentication successful");
@@ -64,7 +64,7 @@ router.get(
       }
 
       console.log(`Logged in as ${user.dataValues.username}`);
-      res.redirect("http://localhost:3000/user");
+      res.redirect( `${process.env.FRONTEND_URL}/user`);
     });
   }
 );

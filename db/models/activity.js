@@ -6,6 +6,30 @@ const Activity = db.define("activity", {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  type: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  price_level: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+  },
+  rating: {
+    type: DataTypes.FLOAT,
+    allowNull: true,
+  },
+  popularity: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+  },
+  place_images: {
+    type: DataTypes.JSON,
+    allowNull: true,
+  },
+  map_url: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
   cost: {
     type: DataTypes.FLOAT,
     allowNull: false,

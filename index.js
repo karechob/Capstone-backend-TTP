@@ -9,12 +9,22 @@ const crypto = require("crypto");
 const User = require("./db/models/user");
 require("dotenv").config();
 
-const PORT = 8080;
+const app = express();
+
 const sessionStore = new SequelizeStore({ db });
 
-express.get("/", (req, res) => {
+const PORT = 8080;
+
+ app.use(bodyParser.json()); 
+ app.use(bodyParser.urlencoded({ extended: true }));
+
+ //const sessionStore = new SequelizeStore({ db });
+
+app.get("/", (req, res) => {
   res.send("Express on Vercel 🥳🤩");
 });
+
+
 
 
 // Helper functions
@@ -51,8 +61,6 @@ const configSession = () => ({
 
 // Middleware setup
 const setupMiddleware = (app) => {
-  app.use(bodyParser.json()); 
-  app.use(bodyParser.urlencoded({ extended: true }));
   app.use(
     cors({
       origin: "http://localhost:3000",

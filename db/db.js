@@ -17,4 +17,9 @@ const db = new Sequelize(
   }
 );
 
+//for seeding production db
+// const db = new Sequelize (
+//   "postgres://default:HD7ALUskqBN8@ep-shy-voice-12880499-pooler.us-east-1.postgres.vercel-storage.com/verceldb?sslmode=require"
+// )
+
 module.exports = db;

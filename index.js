@@ -7,7 +7,7 @@ const session = require("express-session");
 const SequelizeStore = require("connect-session-sequelize")(session.Store);
 const passport = require("passport");
 const crypto = require("crypto");
-const {User} = require("./db/models");
+const {User} = require("./db/models"); //db/models --> complicates some of the issues (introduces potential errors through typos)
 
 const app = express();
 

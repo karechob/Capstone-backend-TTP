@@ -4,6 +4,7 @@ require("dotenv").config();
 
 router.post("/allactivities", async (req, res, next) => {
   try {
+    console.log("Fetching activities");
     const resultsArray = [];
 
     // Creating activity object with necessary details

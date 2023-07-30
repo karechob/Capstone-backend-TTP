@@ -21,7 +21,7 @@ const PORT = process.env.PORT || 8080;
  //const sessionStore = new SequelizeStore({ db });
 
 app.get("/", (req, res) => {
-  res.send("Express on Vercel 🥳🤩 !!! with port ", PORT);
+  res.status(200).send(`Express on Vercel 🥳🤩 !!! with port ${PORT}`);
 });
 
 

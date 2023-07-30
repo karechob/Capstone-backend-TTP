@@ -3,7 +3,7 @@ const { User, Trip, Activity, Hotel, Flight, Collaborator } = require("./db/mode
 
 const seed = async () => {
   try {
-    await db.sync();
+    await db.sync({force: true});
     const salt = await User.generateSalt();
 
     const user1 = await User.create({

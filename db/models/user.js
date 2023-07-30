@@ -1,4 +1,4 @@
-const crypto = require("node:crypto");
+const crypto = require("crypto");
 const { Model, DataTypes } = require("sequelize");
 const db = require("../db");
 

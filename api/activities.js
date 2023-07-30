@@ -13,7 +13,7 @@ router.post("/allactivities", async (req, res, next) => {
       price_level: 0,
       rating: 0,
       popularity: 0,
-      place_images: {},
+      place_images: [],
       map_url: "",
     };
 

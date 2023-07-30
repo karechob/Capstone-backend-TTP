@@ -5,21 +5,22 @@ require("dotenv").config();
 router.post("/allactivities", async (req, res, next) => {
   try {
     const resultsArray = [];
+
+    // Creating activity object with necessary details
     const activityObject = {
       name: "",
       type: "",
       price_level: 0,
       rating: 0,
       popularity: 0,
-      place_image: {},
+      place_images: {},
       map_url: "",
     };
 
     // Takes in a destination param provided from the frontend to request a single place from that location
     var textSearchOptions = {
       method: "get",
-      //url: `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${req.body.destination}&radius=50000&key=${process.env.PLACES_API_KEY}`,
-      url: `https://maps.googleapis.com/maps/api/place/textsearch/json?query=Hawaii&radius=50000&key=${process.env.PLACES_API_KEY}`,
+      url: `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${req.body.destination}&radius=50000&key=${process.env.PLACES_API_KEY}`,
       headers: {},
     };
 
@@ -36,8 +37,6 @@ router.post("/allactivities", async (req, res, next) => {
       headers: {},
     };
 
-    const tourist_attraction_list = await axios.request(tourist_attraction); //20 results
-
     // Another nearbySearch request with the type specified as restaurants or food places.
     var food = {
       method: "get",
@@ -45,13 +44,12 @@ router.post("/allactivities", async (req, res, next) => {
       headers: {},
     };
 
+    // Axios requests
+    const tourist_attraction_list = await axios.request(tourist_attraction); //20 results
     const food_list = await axios.request(food); //20 results
 
-    // We want 5 from each search request, taking the photo reference and place id to be sent to 2 other api calls
-
+    // Want 5 results from axios requests, requiring place id to be sent to placeDetails call
     for (let i = 0; i < 5; i++) {
-      let tourist_attraction_photo_ref =
-        tourist_attraction_list.data.results[i].photos[0].photo_reference;
       let tourist_attraction_place_id =
         tourist_attraction_list.data.results[i].place_id;
 
@@ -61,14 +59,12 @@ router.post("/allactivities", async (req, res, next) => {
         headers: {},
       };
 
+      // Axios request to fetch place details
       const tourist_place_details_Search = await axios.request(
         tourist_place_details
       );
 
-      const photoResponse = await axios.request(
-        `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference=${tourist_attraction_photo_ref}&key=${process.env.PLACES_API_KEY}`
-      );
-
+      // Handles if a place does not have a price level
       if (!tourist_place_details_Search.data.result.price_level) {
         const activityObject = {
           name: tourist_place_details_Search.data.result.name,
@@ -77,7 +73,7 @@ router.post("/allactivities", async (req, res, next) => {
           rating: tourist_place_details_Search.data.result.rating,
           popularity:
             tourist_place_details_Search.data.result.user_ratings_total,
-          //place_image: photoResponse,
+          place_images: tourist_place_details_Search.data.result.photos,
           map_url: tourist_place_details_Search.data.result.url,
         };
 
@@ -90,7 +86,7 @@ router.post("/allactivities", async (req, res, next) => {
           rating: tourist_place_details_Search.data.result.rating,
           popularity:
             tourist_place_details_Search.data.result.user_ratings_total,
-          //place_image: photoResponse,
+          place_images: tourist_place_details_Search.data.result.photos,
           map_url: tourist_place_details_Search.data.result.url,
         };
 
@@ -99,7 +95,6 @@ router.post("/allactivities", async (req, res, next) => {
     }
 
     for (let i = 0; i < 5; i++) {
-      let food_photo_ref = food_list.data.results[i].photos[0].photo_reference;
       let food_place_id = food_list.data.results[i].place_id;
 
       var food_place_details = {
@@ -108,23 +103,18 @@ router.post("/allactivities", async (req, res, next) => {
         headers: {},
       };
 
-      const food_place_details_Search = await axios.request(
-        food_place_details
-      );
+      // Axios request to fetch place details
+      const food_place_details_Search = await axios.request(food_place_details);
 
-      const photoResponse = await axios.request(
-        `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference=${food_photo_ref}&key=${process.env.PLACES_API_KEY}`
-      );
-
+      // Handles if a place does not have a price level
       if (!food_place_details_Search.data.result.price_level) {
         const activityObject = {
           name: food_place_details_Search.data.result.name,
           type: food_place_details_Search.data.result.types[0],
           price_level: 0,
           rating: food_place_details_Search.data.result.rating,
-          popularity:
-            food_place_details_Search.data.result.user_ratings_total,
-          //place_image: photoResponse,
+          popularity: food_place_details_Search.data.result.user_ratings_total,
+          place_images: food_place_details_Search.data.result.photos,
           map_url: food_place_details_Search.data.result.url,
         };
 
@@ -135,9 +125,8 @@ router.post("/allactivities", async (req, res, next) => {
           type: food_place_details_Search.data.result.types[0],
           price_level: food_place_details_Search.data.result.price_level,
           rating: food_place_details_Search.data.result.rating,
-          popularity:
-            food_place_details_Search.data.result.user_ratings_total,
-          //place_image: photoResponse,
+          popularity: food_place_details_Search.data.result.user_ratings_total,
+          place_images: food_place_details_Search.data.result.photos,
           map_url: food_place_details_Search.data.result.url,
         };
 
@@ -145,6 +134,7 @@ router.post("/allactivities", async (req, res, next) => {
       }
     }
 
+    // resultsArray consists of activity objects of tourist attractions and food
     res.json(resultsArray);
   } catch (error) {
     console.error(error);

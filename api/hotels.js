@@ -34,12 +34,12 @@ router.post("/information", async function (req, res, next) {
           room_number: "1",
           units: "metric",
           checkout_date: req.body.checkoutDate,
-          locale: "en-gb",
+          locale: "en-us",
           dest_id: dest_id,
           filter_by_currency: "USD",
           checkin_date: req.body.startDate,
-          adults_number: "1",
-          order_by: "price",
+          adults_number: "2",
+          order_by: "popularity",
           categories_filter_ids: req.body.hotelBudgetRange,
           page_number: "0",
           include_adjacency: "true",
@@ -58,7 +58,7 @@ router.post("/information", async function (req, res, next) {
         informationResponse.data.results &&
         informationResponse.data.results.length > 0
       ) {
-        for (let i = 0; i < 10; i++) {
+        for (let i = 0; i < 20; i++) {
           const hotelKey = `hotel_${i}`;
           if (informationResponse.data.results[i]) {
             allHotels[hotelKey] = informationResponse.data.results[i];

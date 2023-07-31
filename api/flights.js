@@ -65,7 +65,7 @@ router.post("/allflights", async function (req, res, next) {
         sid: "iSiX639",
         origin_airport_code: origin, //get this value through /airport --> airport.id
         destination_airport_code: destination, //get this value through /airport  --> airport.id
-        number_of_itineraries: "4",
+        number_of_itineraries: "10",
         currency: "USD",
       },
       headers: {
